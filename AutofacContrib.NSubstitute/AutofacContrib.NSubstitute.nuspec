@@ -32,7 +32,7 @@
        <dependency id="NSubstitute" version="1.4" />
 	   <dependency id="Autofac" version="2.5.2.830" />
     </dependencies>
-  </metadata>a
+  </metadata>
   <files>
     <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
     <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET40" />
