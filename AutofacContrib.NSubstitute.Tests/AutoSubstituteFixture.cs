@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace AutofacContrib.NSubstitute.Tests
 {
     [TestFixture]
-    public sealed class AutoMockFixture
+    public sealed class AutoSubstituteFixture
     {
         #region stubs
         public interface IServiceA
@@ -49,7 +49,7 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void DefaultConstructorIsLoose()
         {
-            using (var mock = new AutoMock())
+            using (var mock = new AutoSubstitute())
             {
                 RunWithSingleSetupationTest(mock);
             }
@@ -58,12 +58,12 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void ProvideMock()
         {
-            using (var autoMock = new AutoMock())
+            using (var autoSubstitute = new AutoSubstitute())
             {
                 var mockA = Substitute.For<IServiceA>();
-                autoMock.Provide(mockA);
+                autoSubstitute.Provide(mockA);
 
-                var component = autoMock.Resolve<TestComponent>();
+                var component = autoSubstitute.Resolve<TestComponent>();
                 component.RunAll();
 
                 mockA.Received().RunA();
@@ -73,7 +73,7 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void ProvideImplementation()
         {
-            using (var mock = new AutoMock())
+            using (var mock = new AutoSubstitute())
             {
                 var serviceA = mock.Provide<IServiceA, ServiceA>();
 
@@ -85,7 +85,7 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void DefaultConstructorWorksWithAllTests()
         {
-            using (var mock = new AutoMock())
+            using (var mock = new AutoSubstitute())
             {
                 RunTest(mock);
             }
@@ -94,7 +94,7 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void WorksWithUnmetSetupations()
         {
-            using (var loose = new AutoMock())
+            using (var loose = new AutoSubstitute())
             {
                 RunWithSingleSetupationTest(loose);
             }
@@ -104,7 +104,7 @@ namespace AutofacContrib.NSubstitute.Tests
         [ExpectedException(typeof(ReceivedCallsException))]
         public void NormalSetupationsAreVerified()
         {
-            using (var mock = new AutoMock())
+            using (var mock = new AutoSubstitute())
             {
                 SetUpSetupations(mock);
             }
@@ -113,11 +113,11 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void ProperInitializationIsPerformed()
         {
-            var autoMock = new AutoMock();
-            Assert.IsNotNull(autoMock.Container);
+            var autoSubstitute = new AutoSubstitute();
+            Assert.IsNotNull(autoSubstitute.Container);
         }
 
-        private static void RunTest(AutoMock mock)
+        private static void RunTest(AutoSubstitute mock)
         {
             var component = mock.Resolve<TestComponent>();
             component.RunAll();
@@ -125,18 +125,18 @@ namespace AutofacContrib.NSubstitute.Tests
             SetUpSetupations(mock);
         }
 
-        private static void SetUpSetupations(AutoMock autoMock)
+        private static void SetUpSetupations(AutoSubstitute autoSubstitute)
         {
-            autoMock.Resolve<IServiceB>().Received().RunB();
-            autoMock.Resolve<IServiceA>().Received().RunA();
+            autoSubstitute.Resolve<IServiceB>().Received().RunB();
+            autoSubstitute.Resolve<IServiceA>().Received().RunA();
         }
 
-        private static void RunWithSingleSetupationTest(AutoMock autoMock)
+        private static void RunWithSingleSetupationTest(AutoSubstitute autoSubstitute)
         {
-            var component = autoMock.Resolve<TestComponent>();
+            var component = autoSubstitute.Resolve<TestComponent>();
             component.RunAll();
 
-            autoMock.Resolve<IServiceB>().Received().RunB();
+            autoSubstitute.Resolve<IServiceB>().Received().RunB();
         }
     }
 }

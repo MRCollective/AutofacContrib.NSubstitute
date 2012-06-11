@@ -35,22 +35,32 @@ Given the following code:
         }
     }
 
-Then consider the following test which outlines how to use the `AutoMock` class:
+Then consider the following test which outlines how to use the `AutoSubstitute` class:
 
     [Test]
-    public void Example_test()
+    public void Example_test_with_standard_resolve()
     {
         const int val = 3;
-        var autoMock = new AutoMock();
-        autoMock.Resolve<IDependency2>().SomeOtherMethod().Returns(val);
-        autoMock.Resolve<IDependency1>().SomeMethod(val).Returns(c => c.Arg<int>());
+        var autoSubstitute = new AutoSubstitute();
+        autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val);
+        autoSubstitute.Resolve<IDependency1>().SomeMethod(val).Returns(c => c.Arg<int>());
 
-        var result = autoMock.Resolve<MyClass>().AMethod();
+        var result = autoSubstitute.Resolve<MyClass>().AMethod();
 
         Assert.That(result, Is.EqualTo(val));
     }
 
-You can also provide classes to `AutoMock`, consider the following code:
+You can also provide concrete classes to `AutoSubstitute` either explicitly or by type, consider the following code to add the code above:
+
+    public class Dependency2 : IDependency2
+    {
+        public const int Value = 10;
+
+        public int SomeOtherMethod()
+        {
+            return Value;
+        }
+    }
 
     public class ConcreteClass
     {
@@ -61,7 +71,7 @@ You can also provide classes to `AutoMock`, consider the following code:
             _i = i;
         }
 
-        public int Add(int val)
+        public virtual int Add(int val)
         {
             return val + _i;
         }
@@ -84,20 +94,55 @@ You can also provide classes to `AutoMock`, consider the following code:
         }
     }
 
-And then the following test:
+And then the following tests:
 
     [Test]
-    public void Example_test_with_provide_and_resolve()
+    public void Example_test_with_concrete_type_provided()
+    {
+        const int val = 3;
+        var autoSubstitute = new AutoSubstitute();
+        autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
+        autoSubstitute.Provide<IDependency2, Dependency2>();
+        autoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
+
+        var result = autoSubstitute.Resolve<MyClass>().AMethod();
+
+        Assert.That(result, Is.EqualTo(Dependency2.Value));
+    }
+
+    [Test]
+    public void Example_test_with_conrete_object_provide()
     {
         const int val1 = 3;
         const int val2 = 2;
-        var autoMock = new AutoMock();
-        autoMock.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-        autoMock.Provide(new ConcreteClass(val2));
+        var autoSubstitute = new AutoSubstitute();
+        autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+        autoSubstitute.Provide(new ConcreteClass(val2));
 
-        var result = autoMock.Resolve<MyClassWithConcreteDependency>().AMethod();
+        var result = autoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
         Assert.That(result, Is.EqualTo(val1 + val2));
     }
 
-If you need to access the underlying Autofac container for some reason then you use the `Container` property on the `AutoMock` object.
+There is also a convenient syntax for registering and resolving a `Substitute.For<T>()` with the underlying container for concrete classes:
+
+    [Test]
+    public void Example_test_with_substitute_for_concrete()
+    {
+        const int val1 = 3;
+        const int val2 = 2;
+        const int val3 = 10;
+        var autoSubstitute = new AutoSubstitute();
+        autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+        autoSubstitute.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
+
+        var result = autoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
+
+        Assert.That(result, Is.EqualTo(val3));
+    }
+
+If you need to access the underlying Autofac container for some reason then you use the `Container` property on the `AutoSubstitute` object.
+
+If you want to make modifications to the container builder before the container is build from it there is a second constructor parameter you can use, for example:
+
+    var autoSubstitute = new AutoSubstitute(cb => cb.RegisterModule<SomeModule>());

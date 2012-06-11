@@ -58,8 +58,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoMock.cs" />
     <None Include="AutofacContrib.NSubstitute.nuspec" />
+    <Compile Include="AutoMock.cs" />
     <Compile Include="NSubstituteRegistrationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using Autofac;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace AutofacContrib.NSubstitute.Tests
@@ -11,6 +12,16 @@ namespace AutofacContrib.NSubstitute.Tests
     public interface IDependency2
     {
         int SomeOtherMethod();
+    }
+
+    public class Dependency2 : IDependency2
+    {
+        public const int Value = 10;
+
+        public int SomeOtherMethod()
+        {
+            return Value;
+        }
     }
 
     public class MyClass
@@ -39,7 +50,7 @@ namespace AutofacContrib.NSubstitute.Tests
             _i = i;
         }
 
-        public int Add(int val)
+        public virtual int Add(int val)
         {
             return val + _i;
         }
@@ -66,30 +77,59 @@ namespace AutofacContrib.NSubstitute.Tests
     class ExampleFixture
     {
         [Test]
-        public void Example_test_with_resolve()
+        public void Example_test_with_standard_resolve()
         {
             const int val = 3;
-            var autoMock = new AutoMock();
-            autoMock.Resolve<IDependency2>().SomeOtherMethod().Returns(val);
-            autoMock.Resolve<IDependency1>().SomeMethod(val).Returns(c => c.Arg<int>());
+            var AutoSubstitute = new AutoSubstitute();
+            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val);
+            AutoSubstitute.Resolve<IDependency1>().SomeMethod(val).Returns(c => c.Arg<int>());
 
-            var result = autoMock.Resolve<MyClass>().AMethod();
+            var result = AutoSubstitute.Resolve<MyClass>().AMethod();
 
             Assert.That(result, Is.EqualTo(val));
         }
 
         [Test]
-        public void Example_test_with_provide_and_resolve()
+        public void Example_test_with_concrete_type_provided()
+        {
+            const int val = 3;
+            var AutoSubstitute = new AutoSubstitute();
+            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
+            AutoSubstitute.Provide<IDependency2, Dependency2>();
+            AutoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
+
+            var result = AutoSubstitute.Resolve<MyClass>().AMethod();
+
+            Assert.That(result, Is.EqualTo(Dependency2.Value));
+        }
+
+        [Test]
+        public void Example_test_with_concrete_object_provided()
         {
             const int val1 = 3;
             const int val2 = 2;
-            var autoMock = new AutoMock();
-            autoMock.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-            autoMock.Provide(new ConcreteClass(val2));
+            var AutoSubstitute = new AutoSubstitute();
+            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+            AutoSubstitute.Provide(new ConcreteClass(val2));
 
-            var result = autoMock.Resolve<MyClassWithConcreteDependency>().AMethod();
+            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
             Assert.That(result, Is.EqualTo(val1 + val2));
+        }
+
+        [Test]
+        public void Example_test_with_substitute_for_concrete()
+        {
+            const int val1 = 3;
+            const int val2 = 2;
+            const int val3 = 10;
+            var AutoSubstitute = new AutoSubstitute();
+            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+            AutoSubstitute.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
+
+            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
+
+            Assert.That(result, Is.EqualTo(val3));
         }
     }
 }

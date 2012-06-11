@@ -1,19 +1,19 @@
 ﻿using System;
-using System.ComponentModel;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Features.ResolveAnything;
-using IContainer = Autofac.IContainer;
-using SubstituteAlias = NSubstitute.Substitute;
+using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
 {
+    [Obsolete("AutoMock has been deprecated in favour of AutoSubstitute.")]
+    public class AutoMock : AutoSubstitute {}
 
     /// <summary>
     /// Auto mocking container using <see cref="Autofac"/> and <see cref="NSubstitute"/>.
     /// </summary>
-    public class AutoMock : IDisposable
+    public class AutoSubstitute: IDisposable
     {
         /// <summary>
         /// <see cref="IContainer"/> that handles the component resolution.
@@ -21,20 +21,36 @@ namespace AutofacContrib.NSubstitute
         public IContainer Container { get; private set; }
 
         /// <summary>
-        /// Create an AutoMock.
+        /// Create an AutoSubstitute.
         /// </summary>
-        public AutoMock()
+        public AutoSubstitute()
         {
             var builder = new ContainerBuilder();
 
             builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
             builder.RegisterSource(new NSubstituteRegistrationHandler());
+
             Container = builder.Build();
         }
 
+        /// <summary>
+        /// Create an AutoSubstitute, but modify the <see cref="Autofac.ContainerBuilder"/> before building a container.
+        /// </summary>
+        /// <param name="builderModifier">Action to modify the <see cref="Autofac.ContainerBuilder"/></param>
+        public AutoSubstitute(Action<ContainerBuilder> builderModifier)
+        {
+            var builder = new ContainerBuilder();
+
+            builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+            builder.RegisterSource(new NSubstituteRegistrationHandler());
+            
+            builderModifier(builder);
+
+            Container = builder.Build();
+        }
 
         /// <summary>
-        /// Verifies mocks and disposes internal container.
+        /// Cleans up the <see cref="Autofac.Core.Container"/>.
         /// </summary>
         public void Dispose()
         {
@@ -42,55 +58,59 @@ namespace AutofacContrib.NSubstitute
         }
 
         /// <summary>
-        /// Resolve the specified type in the container (register it if needed)
+        /// Resolve the specified type from the container.
         /// </summary>
-        /// <typeparam name="T">Service</typeparam>
-        /// <param name="parameters">Optional parameters</param>
-        /// <returns>The service.</returns>
+        /// <typeparam name="T">The type to resolve</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The resolved object</returns>
         public T Resolve<T>(params Parameter[] parameters)
         {
             return Container.Resolve<T>(parameters);
         }
 
         /// <summary>
-        /// Resolve the specified type in the container (register it if needed)
+        /// Register the specified implementation type to the container as the specified service type and resolve it using the given parameters.
         /// </summary>
-        /// <typeparam name="TService">Service</typeparam>
-        /// <typeparam name="TImplementation">The implementation of the service.</typeparam>
-        /// <param name="parameters">Optional parameters</param>
-        /// <returns>The service.</returns>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <typeparam name="TImplementation">The implementation type</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The resolved <see cref="TService"/></returns>
         public TService Provide<TService, TImplementation>(params Parameter[] parameters)
         {
-            Container.ComponentRegistry.Register(
-                RegistrationBuilder.ForType<TImplementation>().As<TService>().InstancePerLifetimeScope().CreateRegistration());
+            Container.ComponentRegistry.Register(RegistrationBuilder.ForType<TImplementation>()
+                .As<TService>().InstancePerLifetimeScope().CreateRegistration()
+            );
 
             return Container.Resolve<TService>(parameters);
         }
 
         /// <summary>
-        /// Resolve the specified type in the container (register specified instance if needed)
+        /// Register the specified object to the container as the specified service type and resolve it.
         /// </summary>
-        /// <typeparam name="TService">Service</typeparam>
-        /// <returns>The instance resolved from container.</returns>
+        /// <typeparam name="TService">The type to register the object as</typeparam>
+        /// <param name="instance">The object to register into the container</param>
+        /// <returns>The instance resolved from container</returns>
         public TService Provide<TService>(TService instance)
             where TService : class
         {
-            Container.ComponentRegistry.Register(
-                RegistrationBuilder.ForDelegate((c, p) => instance).InstancePerLifetimeScope().CreateRegistration());
+            Container.ComponentRegistry.Register(RegistrationBuilder.ForDelegate((c, p) => instance)
+                .InstancePerLifetimeScope().CreateRegistration()
+            );
 
             return Container.Resolve<TService>();
         }
 
         /// <summary>
-        /// Crates and returns a substitute. This is useful mainly for concrete classes where NSubstitutes won't be created by default
-        /// For advanced uses consider using directly Substitute.For and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
+        /// Registers to the container and returns a substitute for a given concrete class.
+        /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
+        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
         /// </summary>
-        /// <typeparam name="TService">Service</typeparam>
-        /// <returns>The instance resolved from container.</returns>
-        public TService SubstituteFor<TService>() where TService : class
+        /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The instance resolved from the container</returns>
+        public TService SubstituteFor<TService>(params object[] parameters) where TService : class
         {
-            // SubstituteAlias=Substitute, but I have to use an Alias since the class name conflics with this member and can't use FQN since it conflics with this namesace
-            var substitute = SubstituteAlias.For<TService>();
+            var substitute = Substitute.For<TService>(parameters);
             return Provide(substitute);
         }
     }

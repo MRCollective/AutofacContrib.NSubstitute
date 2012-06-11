@@ -23,7 +23,7 @@
       https://raw.github.com/robdmoore/AutofacContrib.NSubstitute/master/logo.png
     </iconUrl>
     <tags>
-      substitute, mocking, mocks, nsubstitute, autofac, container, dependency injection, di, testing, unit-testing, TDD, AAA, automock, autosubstitute
+      substitute, mocking, mocks, nsubstitute, autofac, container, dependency-injection, di, testing, unit-testing, TDD, AAA, auto-mock, auto-substitute
     </tags>
     <language>
        en-US 
