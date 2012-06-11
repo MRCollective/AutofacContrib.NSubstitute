@@ -32,6 +32,12 @@
        <dependency id="NSubstitute" version="1.4" />
 	   <dependency id="Autofac" version="2.5.2.830" />
     </dependencies>
+    <releaseNotes>
+      Version 3 of AutofacContrib.NSubstitute brings some significant changes from previous versions:
+      We have deprecated the AutoMock class in favour of AutoSubstitute (in keeping with the theme of the NSubstitute library).
+      There is a new constructor that allows you to make modifications to the ContainerBuilder before the IContainer is built.
+      The latest version of NSubstitute is subpported and there isn't such a hard restriction on the NSubstitute and Autofac version numbers anymore.
+    </releaseNotes>
   </metadata>
   <files>
     <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
