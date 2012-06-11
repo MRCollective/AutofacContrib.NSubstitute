@@ -1,0 +1,24 @@
+﻿<?xml version='1.0' encoding='UTF-8'?> 
+<package>
+  <metadata>
+    <id>
+       AutofacContrib.NSubstitute 
+    </id>
+    <version>
+       3.0.0
+    </version>
+    <authors>
+       Miguel, Rob
+    </authors>
+    <description>
+       AutoMock Container for NSubstitute
+    </description>
+    <language>
+       en-US 
+    </language>
+    <dependencies>
+       <dependency id="NSubstitute" version="1.4" />
+	   <dependency id="Autofac" version="2.5.2.830" />
+    </dependencies>
+  </metadata>
+</package>
