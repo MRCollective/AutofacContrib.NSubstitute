@@ -50,7 +50,7 @@ Then consider the following test which outlines how to use the `AutoMock` class:
         Assert.That(result, Is.EqualTo(val));
     }
 
-You can also provide classes to `AutoMock`, consider the following code in addition to the above:
+You can also provide classes to `AutoMock`, consider the following code:
 
     public class ConcreteClass
     {
