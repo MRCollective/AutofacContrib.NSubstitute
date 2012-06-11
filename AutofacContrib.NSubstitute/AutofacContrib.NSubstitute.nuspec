@@ -8,11 +8,23 @@
        3.0.0
     </version>
     <authors>
-       Miguel, Rob
+       Miguel Madero and Robert Moore
     </authors>
     <description>
-       AutoMock Container for NSubstitute
+       Auto-mocking Autofac container that uses NSubstitute.
     </description>
+    <projectUrl>
+      http://github.com/robdmoore/AutofacContrib.NSubstitute
+    </projectUrl>
+    <licenseUrl>
+      https://github.com/robdmoore/AutofacContrib.NSubstitute/blob/master/LICENSE
+    </licenseUrl>
+    <iconUrl>
+      https://raw.github.com/robdmoore/AutofacContrib.NSubstitute/master/logo.png
+    </iconUrl>
+    <tags>
+      substitute, mocking, mocks, nsubstitute, autofac, container, dependency injection, di, testing, unit-testing, TDD, AAA, automock, autosubstitute
+    </tags>
     <language>
        en-US 
     </language>
@@ -20,5 +32,10 @@
        <dependency id="NSubstitute" version="1.4" />
 	   <dependency id="Autofac" version="2.5.2.830" />
     </dependencies>
-  </metadata>
+  </metadata>a
+  <files>
+    <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
+    <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET40" />
+    <file src="bin\Release\AutofacContrib.NSubstitute.xml" target="lib\NET40" />
+  </files>
 </package>

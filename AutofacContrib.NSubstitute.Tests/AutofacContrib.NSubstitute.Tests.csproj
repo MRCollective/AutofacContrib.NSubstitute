@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="AutoMockFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ExampleFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
