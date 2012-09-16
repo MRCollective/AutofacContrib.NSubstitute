@@ -56,6 +56,23 @@ namespace AutofacContrib.NSubstitute.Tests
         }
     }
 
+    public class ConcreteClassWithDependency
+    {
+        private readonly IDependency1 _dependency;
+        private readonly int _i;
+
+        public ConcreteClassWithDependency(IDependency1 dependency, int i)
+        {
+            _dependency = dependency;
+            _i = i;
+        }
+
+        public int Double()
+        {
+            return _dependency.SomeMethod(_i)*2;
+        }
+    }
+
     public class MyClassWithConcreteDependency
     {
         private readonly ConcreteClass _c;
@@ -70,6 +87,23 @@ namespace AutofacContrib.NSubstitute.Tests
         public int AMethod()
         {
             return _c.Add(_d2.SomeOtherMethod());
+        }
+    }
+
+    public class MyClassWithConcreteDependencyThatHasDependencies
+    {
+        private readonly ConcreteClassWithDependency _c;
+        private readonly IDependency2 _d2;
+
+        public MyClassWithConcreteDependencyThatHasDependencies(ConcreteClassWithDependency c, IDependency2 d2)
+        {
+            _c = c;
+            _d2 = d2;
+        }
+
+        public int AMethod()
+        {
+            return _d2.SomeOtherMethod() * _c.Double();
         }
     }
 
@@ -130,6 +164,24 @@ namespace AutofacContrib.NSubstitute.Tests
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
             Assert.That(result, Is.EqualTo(val3));
+        }
+
+        [Test]
+        public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
+        {
+            const int val1 = 2;
+            const int val2 = 3;
+            const int val3 = 4;
+            var AutoSubstitute = new AutoSubstitute();
+            // Much better / more maintainable than:
+            //AutoSubstitute.SubstituteFor<ConcreteClassWithDependency>(AutoSubstitute.Resolve<IDependency1>(), val1);
+            AutoSubstitute.Provide(AutoSubstitute.Resolve<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1)));
+            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
+            AutoSubstitute.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
+
+            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
+
+            Assert.That(result, Is.EqualTo(val2*val3*2));
         }
     }
 }
