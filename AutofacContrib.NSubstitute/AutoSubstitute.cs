@@ -101,7 +101,7 @@ namespace AutofacContrib.NSubstitute
         }
 
         /// <summary>
-        /// Registers to the container and returns a substitute for a given concrete class.
+        /// Registers to the container and returns a substitute for a given concrete class given the explicit constructor parameters.
         /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
         /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
         /// </summary>
@@ -111,6 +111,20 @@ namespace AutofacContrib.NSubstitute
         public TService SubstituteFor<TService>(params object[] parameters) where TService : class
         {
             var substitute = Substitute.For<TService>(parameters);
+            return Provide(substitute);
+        }
+
+        /// <summary>
+        /// Registers to the container and returns a substitute for a given concrete class using autofac to resolve the constructor parameters.
+        /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
+        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
+        /// </summary>
+        /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
+        /// <param name="parameters">Any constructor parameters that Autofac can't resolve automatically</param>
+        /// <returns>The instance resolved from the container</returns>
+        public TService ResolveAndSubstituteFor<TService>(params Parameter[] parameters) where TService : class
+        {
+            var substitute = Resolve<TService>(parameters);
             return Provide(substitute);
         }
     }

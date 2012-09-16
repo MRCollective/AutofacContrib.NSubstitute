@@ -175,7 +175,7 @@ namespace AutofacContrib.NSubstitute.Tests
             var AutoSubstitute = new AutoSubstitute();
             // Much better / more maintainable than:
             //AutoSubstitute.SubstituteFor<ConcreteClassWithDependency>(AutoSubstitute.Resolve<IDependency1>(), val1);
-            AutoSubstitute.Provide(AutoSubstitute.Resolve<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1)));
+            AutoSubstitute.ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1));
             AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
             AutoSubstitute.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
 
