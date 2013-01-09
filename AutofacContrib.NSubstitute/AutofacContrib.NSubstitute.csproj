@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AutofacContrib.NSubstitute.nuspec" />
+    <Compile Include="AutoSub.cs" />
     <Compile Include="AutoSubstitute.cs" />
     <Compile Include="NSubstituteRegistrationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
