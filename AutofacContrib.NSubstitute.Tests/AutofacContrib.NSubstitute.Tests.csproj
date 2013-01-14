@@ -54,7 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoSubFixture.cs" />
+    <Compile Include="AutoSubstitute`1Fixture.cs" />
     <Compile Include="AutoSubstituteFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ExampleFixture.cs" />
