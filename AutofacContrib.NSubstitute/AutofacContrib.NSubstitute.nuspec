@@ -29,8 +29,8 @@
        en-US 
     </language>
     <dependencies>
-       <dependency id="NSubstitute" version="1.4" />
-	   <dependency id="Autofac" version="2.5.2.830" />
+       <dependency id="NSubstitute" version="1.5.0.0" />
+	   <dependency id="Autofac" version="3.0.0" />
     </dependencies>
     <releaseNotes>
       Version 3 of AutofacContrib.NSubstitute brings some significant changes from previous versions:
