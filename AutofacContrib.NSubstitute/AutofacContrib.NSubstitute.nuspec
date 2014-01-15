@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='UTF-8'?> 
+﻿<?xml version="1.0" encoding="UTF-8"?> 
 <package>
   <metadata>
     <id>
@@ -23,25 +23,21 @@
       https://raw.github.com/robdmoore/AutofacContrib.NSubstitute/master/logo.png
     </iconUrl>
     <tags>
-      substitute, mocking, mocks, nsubstitute, autofac, container, dependency-injection, di, testing, unit-testing, TDD, AAA, auto-mock, auto-substitute
+      substitute mocking mocks nsubstitute autofac container dependency-injection di testing unit-testing TDD AAA auto-mock auto-substitute
     </tags>
     <language>
-       en-US 
+       en-US
     </language>
     <dependencies>
-       <dependency id="NSubstitute" version="1.6.1.0" />
-	   <dependency id="Autofac" version="3.0.2" />
+       <dependency id="NSubstitute" version="1.7.0.0" />
+       <dependency id="Autofac" version="3.3.0" />
     </dependencies>
-    <releaseNotes>
-      Version 3 of AutofacContrib.NSubstitute brings some significant changes from previous versions:
-      We have deprecated the AutoMock class in favour of AutoSubstitute (in keeping with the theme of the NSubstitute library).
-      There is a new constructor that allows you to make modifications to the ContainerBuilder before the IContainer is built.
-      The latest version of NSubstitute is subpported and there isn't such a hard restriction on the NSubstitute and Autofac version numbers anymore.
-    </releaseNotes>
   </metadata>
   <files>
+    <file src="readme.txt" />
     <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
     <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET40" />
     <file src="bin\Release\AutofacContrib.NSubstitute.xml" target="lib\NET40" />
+    <file src="**\*.cs" exclude="obj\**\*.*" target="src" />
   </files>
 </package>

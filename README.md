@@ -1,5 +1,5 @@
-﻿AutofacContrib.NSubstitute
-==========================
+﻿AutofacContrib.NSubstitute (AutoSubstitute)
+===========================================
 
 An auto-mocking `Autofac` container that resolves unknown dependencies from `NSubstitute`. Useful for unit testing classes with lots of dependencies.
 
