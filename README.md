@@ -3,6 +3,11 @@
 
 An auto-mocking `Autofac` container that resolves unknown dependencies from `NSubstitute`. Useful for unit testing classes with lots of dependencies.
 
+Installation
+------------
+
+Install via [NuGet](http://www.nuget.org/packages/AutofacContrib.NSubstitute/), either in Visual Studio (right-click project, Manage NuGet Packages, search for `AutofacContrib.NSubstitute`) or via the package manager console using `Install-Package AutofacContrib.NSubstitute`.
+
 Example Usage
 -------------
 
