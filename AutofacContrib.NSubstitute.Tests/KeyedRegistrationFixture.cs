@@ -1,4 +1,5 @@
 ﻿using Autofac.Features.Indexed;
+using NSubstitute;
 using NUnit.Framework;
 
 namespace AutofacContrib.NSubstitute.Tests
@@ -32,6 +33,18 @@ namespace AutofacContrib.NSubstitute.Tests
 
             Assert.NotNull(target.OnDependency);
             Assert.NotNull(target.OffDependency);
+        }
+
+        [Test]
+        public static void ShouldUseProvidedIndexedDependency()
+        {
+            var autoSubstitute = new AutoSubstitute();
+            var index = autoSubstitute.Resolve<IIndex<Switch, IDependency2>>();
+            index[Switch.On].SomeOtherMethod().Returns(5);
+
+            var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
+
+            Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
         }
     }
 }
