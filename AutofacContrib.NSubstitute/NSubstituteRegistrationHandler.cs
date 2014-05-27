@@ -27,27 +27,8 @@ namespace AutofacContrib.NSubstitute
         {
             if (service == null)
                 throw new ArgumentNullException("service");
-
-            var keyedService = service as KeyedService;
-            if (keyedService != null)
-            {
-                if (!keyedService.ServiceType.IsInterface ||
-                    keyedService.ServiceType.IsGenericType &&
-                    keyedService.ServiceType.GetGenericTypeDefinition() == typeof (IEnumerable<>) ||
-                    keyedService.ServiceType.IsArray ||
-                    typeof (IStartable).IsAssignableFrom(keyedService.ServiceType))
-                    return Enumerable.Empty<IComponentRegistration>();
-
-                return new[]
-                {
-                    RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] { keyedService.ServiceType }, null))
-                    .As(service)
-                    .InstancePerLifetimeScope()
-                    .CreateRegistration()
-                };
-            }
-
-            var typedService = service as TypedService;
+            
+            var typedService = service as IServiceWithType;
             if (typedService == null ||
                 !typedService.ServiceType.IsInterface ||
                 typedService.ServiceType.IsGenericType && typedService.ServiceType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||
