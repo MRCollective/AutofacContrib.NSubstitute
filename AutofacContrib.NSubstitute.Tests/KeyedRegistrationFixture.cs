@@ -25,7 +25,7 @@ namespace AutofacContrib.NSubstitute.Tests
     public static class KeyedRegistrationFixture
     {
         [Test]
-        public static void ShouldResolveIndexedDependency()
+        public static void ShouldResolveIndexedDependencies()
         {
             var autoSubstitute = new AutoSubstitute();
 
@@ -36,12 +36,25 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        public static void ShouldUseProvidedIndexedDependency()
+        public static void ShouldResolveASubstituteForIndexedDependency()
         {
             var autoSubstitute = new AutoSubstitute();
             var index = autoSubstitute.Resolve<IIndex<Switch, IDependency2>>();
             index[Switch.On].SomeOtherMethod().Returns(5);
 
+            var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
+
+            Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
+        }
+
+        [Test]
+        public static void ShouldAcceptProvidedIndexedDependency()
+        {
+            var autoSubstitute = new AutoSubstitute();
+            var substitute = Substitute.For<IDependency2>();
+            substitute.SomeOtherMethod().Returns(5);
+            autoSubstitute.Provide(substitute, Switch.On);
+            
             var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
 
             Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
