@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using Autofac.Builder;
@@ -27,22 +28,26 @@ namespace AutofacContrib.NSubstitute
             if (service == null)
                 throw new ArgumentNullException("service");
 
-            var typedService = service as TypedService;
-            if (typedService != null &&
-                typedService.ServiceType.IsGenericType &&
-                typedService.ServiceType.GetGenericTypeDefinition() == typeof (IIndex<,>))
+            var keyedService = service as KeyedService;
+            if (keyedService != null)
+            {
+                if (!keyedService.ServiceType.IsInterface ||
+                    keyedService.ServiceType.IsGenericType &&
+                    keyedService.ServiceType.GetGenericTypeDefinition() == typeof (IEnumerable<>) ||
+                    keyedService.ServiceType.IsArray ||
+                    typeof (IStartable).IsAssignableFrom(keyedService.ServiceType))
+                    return Enumerable.Empty<IComponentRegistration>();
+
                 return new[]
                 {
-                    RegistrationBuilder.ForDelegate((c, p) =>
-                    {
-                        var type = typeof(SubstitutedIndexedValues<,>).MakeGenericType(typedService.ServiceType.GetGenericArguments());
-                        return Activator.CreateInstance(type);
-                    })
+                    RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] { keyedService.ServiceType }, null))
                     .As(service)
                     .InstancePerLifetimeScope()
                     .CreateRegistration()
                 };
+            }
 
+            var typedService = service as TypedService;
             if (typedService == null ||
                 !typedService.ServiceType.IsInterface ||
                 typedService.ServiceType.IsGenericType && typedService.ServiceType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||
@@ -60,28 +65,6 @@ namespace AutofacContrib.NSubstitute
         public bool IsAdapterForIndividualComponents
         {
             get { return false; }
-        }
-    }
-
-    internal class SubstitutedIndexedValues<TKey, TValue> : IIndex<TKey, TValue>
-        where TValue : class
-    {
-        readonly IDictionary<TKey, TValue> _substitutes = new Dictionary<TKey, TValue>();
-
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            if (!_substitutes.ContainsKey(key))
-                _substitutes[key] = Substitute.For<TValue>();
-            value = _substitutes[key];
-            return true;
-        }
-
-        public TValue this[TKey key]
-        {
-            get
-            {
-                return _substitutes[key];
-            }
         }
     }
 }
