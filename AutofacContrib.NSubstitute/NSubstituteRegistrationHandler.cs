@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
+using Autofac.Features.Indexed;
 using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
@@ -27,6 +28,21 @@ namespace AutofacContrib.NSubstitute
                 throw new ArgumentNullException("service");
 
             var typedService = service as TypedService;
+            if (typedService != null &&
+                typedService.ServiceType.IsGenericType &&
+                typedService.ServiceType.GetGenericTypeDefinition() == typeof (IIndex<,>))
+                return new[]
+                {
+                    RegistrationBuilder.ForDelegate((c, p) =>
+                    {
+                        var type = typeof(SubstitutedIndexedValues<,>).MakeGenericType(typedService.ServiceType.GetGenericArguments());
+                        return Activator.CreateInstance(type);
+                    })
+                    .As(service)
+                    .InstancePerLifetimeScope()
+                    .CreateRegistration()
+                };
+
             if (typedService == null ||
                 !typedService.ServiceType.IsInterface ||
                 typedService.ServiceType.IsGenericType && typedService.ServiceType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||
@@ -44,6 +60,28 @@ namespace AutofacContrib.NSubstitute
         public bool IsAdapterForIndividualComponents
         {
             get { return false; }
+        }
+    }
+
+    internal class SubstitutedIndexedValues<TKey, TValue> : IIndex<TKey, TValue>
+        where TValue : class
+    {
+        readonly IDictionary<TKey, TValue> _substitutes = new Dictionary<TKey, TValue>();
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            if (!_substitutes.ContainsKey(key))
+                _substitutes[key] = Substitute.For<TValue>();
+            value = _substitutes[key];
+            return true;
+        }
+
+        public TValue this[TKey key]
+        {
+            get
+            {
+                return _substitutes[key];
+            }
         }
     }
 }
