@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
+using Autofac.Features.Indexed;
 using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
@@ -25,8 +27,8 @@ namespace AutofacContrib.NSubstitute
         {
             if (service == null)
                 throw new ArgumentNullException("service");
-
-            var typedService = service as TypedService;
+            
+            var typedService = service as IServiceWithType;
             if (typedService == null ||
                 !typedService.ServiceType.IsInterface ||
                 typedService.ServiceType.IsGenericType && typedService.ServiceType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||

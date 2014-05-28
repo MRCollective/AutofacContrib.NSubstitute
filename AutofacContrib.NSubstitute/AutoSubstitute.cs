@@ -101,6 +101,23 @@ namespace AutofacContrib.NSubstitute
         }
 
         /// <summary>
+        /// Register the specified object to the container as the specified keyed service type and resolve it.
+        /// </summary>
+        /// <typeparam name="TService">The type to register the object as</typeparam>
+        /// <param name="instance">The object to register into the container</param>
+        /// <param name="serviceKey">The key to register the service with</param>
+        /// <returns>The instance resolved from container</returns>
+        public TService Provide<TService>(TService instance, object serviceKey)
+            where TService : class
+        {
+            Container.ComponentRegistry.Register(RegistrationBuilder.ForDelegate((c, p) => instance).As(new KeyedService(serviceKey, typeof(TService)))
+                .InstancePerLifetimeScope().CreateRegistration()
+            );
+
+            return Container.Resolve<TService>();
+        }
+
+        /// <summary>
         /// Registers to the container and returns a substitute for a given concrete class given the explicit constructor parameters.
         /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
         /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
