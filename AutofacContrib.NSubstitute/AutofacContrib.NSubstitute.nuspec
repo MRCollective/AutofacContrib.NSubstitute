@@ -1,43 +1,21 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?> 
 <package>
   <metadata>
-    <id>
-       AutofacContrib.NSubstitute 
-    </id>
-    <version>
-       3.0.0
-    </version>
-    <authors>
-       Miguel Madero and Robert Moore
-    </authors>
-    <description>
-       Auto-mocking Autofac container that uses NSubstitute.
-    </description>
-    <projectUrl>
-      http://github.com/robdmoore/AutofacContrib.NSubstitute
-    </projectUrl>
-    <licenseUrl>
-      https://github.com/robdmoore/AutofacContrib.NSubstitute/blob/master/LICENSE
-    </licenseUrl>
-    <iconUrl>
-      https://raw.github.com/robdmoore/AutofacContrib.NSubstitute/master/logo.png
-    </iconUrl>
-    <tags>
-      substitute mocking mocks nsubstitute autofac container dependency-injection di testing unit-testing TDD AAA auto-mock auto-substitute
-    </tags>
-    <language>
-       en-US
-    </language>
-    <dependencies>
-       <dependency id="NSubstitute" version="1.7.0.0" />
-       <dependency id="Autofac" version="3.3.0" />
-    </dependencies>
+    <id>AutofacContrib.NSubstitute</id>
+    <version>@build.number@</version>
+    <authors>Miguel Madero and Robert Moore</authors>
+    <description>Auto-mocking Autofac container that uses NSubstitute.</description>
+    <projectUrl>http://github.com/robdmoore/AutofacContrib.NSubstitute</projectUrl>
+    <licenseUrl>https://github.com/robdmoore/AutofacContrib.NSubstitute/blob/master/LICENSE</licenseUrl>
+    <iconUrl>https://raw.github.com/robdmoore/AutofacContrib.NSubstitute/master/logo.png</iconUrl>
+    <tags>substitute mocking mocks nsubstitute autofac container dependency-injection di testing unit-testing TDD AAA auto-mock auto-substitute</tags>
+    <language>en-US</language>
+    @dependencies@
   </metadata>
   <files>
-    <file src="readme.txt" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET40" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.xml" target="lib\NET40" />
-    <file src="**\*.cs" exclude="obj\**\*.*" target="src" />
+    <file src="..\..\readme.txt" />
+    <file src="AutofacContrib.NSubstitute.dll" target="lib\net40" />
+    <file src="AutofacContrib.NSubstitute.pdb" target="lib\net40" />
+    <file src="AutofacContrib.NSubstitute.xml" target="lib\net40" />
   </files>
 </package>
