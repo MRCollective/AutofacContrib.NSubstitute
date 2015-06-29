@@ -7,6 +7,9 @@ using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
 {
+    /// <summary>
+    /// Deprecated auto mocking container. Use <see cref="AutoSubstitute"/> instead.
+    /// </summary>
     [Obsolete("AutoMock has been deprecated in favour of AutoSubstitute.")]
     public class AutoMock : AutoSubstitute {}
 
@@ -74,7 +77,7 @@ namespace AutofacContrib.NSubstitute
         /// <typeparam name="TService">The type to register the implementation as</typeparam>
         /// <typeparam name="TImplementation">The implementation type</typeparam>
         /// <param name="parameters">Optional constructor parameters</param>
-        /// <returns>The resolved <see cref="TService"/></returns>
+        /// <returns>The resolved service instance</returns>
         public TService Provide<TService, TImplementation>(params Parameter[] parameters)
         {
             Container.ComponentRegistry.Register(RegistrationBuilder.ForType<TImplementation>()
@@ -120,7 +123,7 @@ namespace AutofacContrib.NSubstitute
         /// <summary>
         /// Registers to the container and returns a substitute for a given concrete class given the explicit constructor parameters.
         /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
-        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
+        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}(TService)"/> so that type is used on dependencies for other Resolved types.
         /// </summary>
         /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
         /// <param name="parameters">Optional constructor parameters</param>
@@ -134,7 +137,7 @@ namespace AutofacContrib.NSubstitute
         /// <summary>
         /// Registers to the container and returns a substitute for a given concrete class using autofac to resolve the constructor parameters.
         /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
-        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}"/> so that type is used on dependencies for other Resolved types.
+        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}(TService)"/> so that type is used on dependencies for other Resolved types.
         /// </summary>
         /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
         /// <param name="parameters">Any constructor parameters that Autofac can't resolve automatically</param>
