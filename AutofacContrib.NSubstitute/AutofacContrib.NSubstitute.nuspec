@@ -29,7 +29,7 @@
        en-US
     </language>
     <dependencies>
-       <dependency id="NSubstitute" version="1.8.2.0" />
+       <dependency id="NSubstitute" version="1.9.2.0" />
        <dependency id="Autofac" version="3.5.2" />
     </dependencies>
   </metadata>
