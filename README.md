@@ -1,5 +1,11 @@
-﻿AutofacContrib.NSubstitute (AutoSubstitute)
+![Chameleon Forms logo](https://raw.githubusercontent.com/MRCollective/AutofacContrib.NSubstitute/master/logo.png)
+
+AutofacContrib.NSubstitute (AutoSubstitute)
 ===========================================
+
+[![Build status](https://ci.mdavies.net/app/rest/builds/buildType:%28id:AutofacContribNSubstitute_CI%29,branch:%28default:true%29/statusIcon)](https://ci.mdavies.net/viewType.html?buildTypeId=AutofacContribNSubstitute_CI&branch_AutofacContribNSubstitute=%3Cdefault%3E&tab=buildTypeStatusDiv&guest=1) 
+[![NuGet downloads](https://img.shields.io/nuget/dt/AutofacContrib.NSubstitute.svg)](https://www.nuget.org/packages/AutofacContrib.NSubstitute) 
+[![NuGet version](https://img.shields.io/nuget/vpre/AutofacContrib.NSubstitute.svg)](https://www.nuget.org/packages/AutofacContrib.NSubstitute)
 
 An auto-mocking `Autofac` container that resolves unknown dependencies from `NSubstitute`. Useful for unit testing classes with lots of dependencies.
 
