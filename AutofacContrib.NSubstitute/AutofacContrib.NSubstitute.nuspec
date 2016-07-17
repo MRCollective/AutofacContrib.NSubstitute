@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?> 
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <package>
   <metadata>
     <id>
-       AutofacContrib.NSubstitute 
+       AutofacContrib.NSubstitute
     </id>
     <version>
        3.0.0
@@ -29,7 +29,7 @@
        en-US
     </language>
     <dependencies>
-       <dependency id="NSubstitute" version="1.9.2.0" />
+       <dependency id="NSubstitute" version="1.10.0.0" />
        <dependency id="Autofac" version="3.5.2" />
     </dependencies>
   </metadata>
