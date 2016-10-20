@@ -101,12 +101,11 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        [ExpectedException(typeof(ReceivedCallsException))]
         public void NormalSetupationsAreVerified()
         {
             using (var mock = new AutoSubstitute())
             {
-                SetUpSetupations(mock);
+                Assert.That(() => SetUpSetupations(mock), Throws.TypeOf<ReceivedCallsException>());
             }
         }
 
