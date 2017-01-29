@@ -35,9 +35,9 @@
   </metadata>
   <files>
     <file src="readme.txt" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET40" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET40" />
-    <file src="bin\Release\AutofacContrib.NSubstitute.xml" target="lib\NET40" />
+    <file src="bin\Release\AutofacContrib.NSubstitute.dll" target="lib\NET45" />
+    <file src="bin\Release\AutofacContrib.NSubstitute.pdb" target="lib\NET45" />
+    <file src="bin\Release\AutofacContrib.NSubstitute.xml" target="lib\NET45" />
     <file src="**\*.cs" exclude="obj\**\*.*" target="src" />
   </files>
 </package>
