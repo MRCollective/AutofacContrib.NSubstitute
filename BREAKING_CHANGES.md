@@ -1,7 +1,19 @@
 AutofacContrib.NSubstitute (AutoSubstitute) Breaking Changes
 ============================================================
 
-Version 3.2.X
+Version 4.0.0
+-------------
+
+Removed support for .NET 4.0; now targetting .NET 4.5+.
+
+### Reason
+In order to keep up to date with latest Autofac dependency we need to drop .NET 4.0 support.
+
+### Workaround
+Use version 3.3.7 if you need .NET 4.0 support.
+
+
+Version 3.2.0
 -------------
 
 Signing of the assembly has been removed.
