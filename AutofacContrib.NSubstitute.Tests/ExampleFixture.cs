@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 
 namespace AutofacContrib.NSubstitute.Tests
 {
@@ -107,10 +107,9 @@ namespace AutofacContrib.NSubstitute.Tests
         }
     }
 
-    [TestFixture]
-    class ExampleFixture
+    public class ExampleFixture
     {
-        [Test]
+        [Fact]
         public void Example_test_with_standard_resolve()
         {
             const int val = 3;
@@ -120,10 +119,10 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var result = AutoSubstitute.Resolve<MyClass>().AMethod();
 
-            Assert.That(result, Is.EqualTo(val));
+            Assert.Equal(result, val);
         }
 
-        [Test]
+        [Fact]
         public void Example_test_with_concrete_type_provided()
         {
             const int val = 3;
@@ -134,10 +133,10 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var result = AutoSubstitute.Resolve<MyClass>().AMethod();
 
-            Assert.That(result, Is.EqualTo(Dependency2.Value));
+            Assert.Equal(result, Dependency2.Value);
         }
 
-        [Test]
+        [Fact]
         public void Example_test_with_concrete_object_provided()
         {
             const int val1 = 3;
@@ -148,10 +147,10 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
-            Assert.That(result, Is.EqualTo(val1 + val2));
+            Assert.Equal(result, val1 + val2);
         }
 
-        [Test]
+        [Fact]
         public void Example_test_with_substitute_for_concrete()
         {
             const int val1 = 3;
@@ -163,10 +162,10 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
-            Assert.That(result, Is.EqualTo(val3));
+            Assert.Equal(result, val3);
         }
 
-        [Test]
+        [Fact]
         public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
         {
             const int val1 = 2;
@@ -181,7 +180,7 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
 
-            Assert.That(result, Is.EqualTo(val2*val3*2));
+            Assert.Equal(result, val2*val3*2);
         }
     }
 }
