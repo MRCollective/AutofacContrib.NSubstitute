@@ -1,12 +1,11 @@
 ﻿using NSubstitute;
 using NSubstitute.Core;
 using NSubstitute.Exceptions;
-using NUnit.Framework;
+using Xunit;
 
 namespace AutofacContrib.NSubstitute.Tests
 {
-    [TestFixture]
-    public sealed class AutoSubstituteFixture
+    public class AutoSubstituteFixture
     {
         #region stubs
         public interface IServiceA
@@ -46,7 +45,7 @@ namespace AutofacContrib.NSubstitute.Tests
         /// <summary>
         /// Defaults the constructor is loose.
         /// </summary>
-        [Test]
+        [Fact]
         public void DefaultConstructorIsLoose()
         {
             using (var mock = new AutoSubstitute())
@@ -55,7 +54,7 @@ namespace AutofacContrib.NSubstitute.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void ProvideMock()
         {
             using (var autoSubstitute = new AutoSubstitute())
@@ -70,19 +69,19 @@ namespace AutofacContrib.NSubstitute.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void ProvideImplementation()
         {
             using (var mock = new AutoSubstitute())
             {
                 var serviceA = mock.Provide<IServiceA, ServiceA>();
 
-                Assert.IsNotNull(serviceA);
-                Assert.IsFalse(serviceA is ICallRouter);
+                Assert.NotNull(serviceA);
+                Assert.False(serviceA is ICallRouter);
             }
         }
 
-        [Test]
+        [Fact]
         public void DefaultConstructorWorksWithAllTests()
         {
             using (var mock = new AutoSubstitute())
@@ -91,7 +90,7 @@ namespace AutofacContrib.NSubstitute.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void WorksWithUnmetSetupations()
         {
             using (var loose = new AutoSubstitute())
@@ -100,20 +99,20 @@ namespace AutofacContrib.NSubstitute.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void NormalSetupationsAreVerified()
         {
             using (var mock = new AutoSubstitute())
             {
-                Assert.That(() => SetUpSetupations(mock), Throws.TypeOf<ReceivedCallsException>());
+                Assert.Throws<ReceivedCallsException>(() => SetUpSetupations(mock));
             }
         }
 
-        [Test]
+        [Fact]
         public void ProperInitializationIsPerformed()
         {
             var autoSubstitute = new AutoSubstitute();
-            Assert.IsNotNull(autoSubstitute.Container);
+            Assert.NotNull(autoSubstitute.Container);
         }
 
         private static void RunTest(AutoSubstitute mock)

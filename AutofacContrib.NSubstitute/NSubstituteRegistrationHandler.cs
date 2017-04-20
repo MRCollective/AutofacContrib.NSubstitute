@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
@@ -36,13 +37,14 @@ namespace AutofacContrib.NSubstitute
                 throw new ArgumentNullException("service");
 
             var typedService = service as IServiceWithType;
+
             if (typedService == null ||
-                !typedService.ServiceType.IsInterface ||
+                !typedService.ServiceType.GetTypeInfo().IsInterface ||
                 IsGenericListOrCollectionInterface(typedService.ServiceType) ||
                 typedService.ServiceType.IsArray ||
                 typeof(IStartable).IsAssignableFrom(typedService.ServiceType))
                 return Enumerable.Empty<IComponentRegistration>();
-
+            
             var rb = RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] {typedService.ServiceType}, null))
                 .As(service)
                 .InstancePerLifetimeScope();
@@ -57,7 +59,9 @@ namespace AutofacContrib.NSubstitute
 
         private static bool IsGenericListOrCollectionInterface(Type serviceType)
         {
-            return serviceType.IsGenericType && GenericCollectionTypes.Contains(serviceType.GetGenericTypeDefinition());
+            // TODO make backwards compatible
+            //return serviceType.IsGenericType && GenericCollectionTypes.Contains(serviceType.GetGenericTypeDefinition());
+            return serviceType.GetTypeInfo().IsGenericType && GenericCollectionTypes.Contains(serviceType.GetGenericTypeDefinition());
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Autofac.Features.Indexed;
 using NSubstitute;
-using NUnit.Framework;
+using Xunit;
 
 namespace AutofacContrib.NSubstitute.Tests
 {
@@ -22,9 +22,9 @@ namespace AutofacContrib.NSubstitute.Tests
         public IDependency2 OffDependency { get; private set; }
     }
 
-    public static class KeyedRegistrationFixture
+    public class KeyedRegistrationFixture
     {
-        [Test]
+        [Fact]
         public static void ShouldResolveIndexedDependencies()
         {
             var autoSubstitute = new AutoSubstitute();
@@ -35,7 +35,7 @@ namespace AutofacContrib.NSubstitute.Tests
             Assert.NotNull(target.OffDependency);
         }
 
-        [Test]
+        [Fact]
         public static void ShouldResolveASubstituteForIndexedDependency()
         {
             var autoSubstitute = new AutoSubstitute();
@@ -44,10 +44,10 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
 
-            Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
+            Assert.Equal(target.OnDependency.SomeOtherMethod(), 5);
         }
 
-        [Test]
+        [Fact]
         public static void ShouldAcceptProvidedIndexedDependency()
         {
             var autoSubstitute = new AutoSubstitute();
@@ -57,7 +57,7 @@ namespace AutofacContrib.NSubstitute.Tests
             
             var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
 
-            Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
+            Assert.Equal(target.OnDependency.SomeOtherMethod(), 5);
         }
     }
 }
