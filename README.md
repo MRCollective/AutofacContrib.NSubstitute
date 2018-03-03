@@ -3,7 +3,7 @@
 AutofacContrib.NSubstitute (AutoSubstitute)
 ===========================================
 
-[![Build status](https://ci.mdavies.net/app/rest/builds/buildType:%28id:AutofacContribNSubstitute_CI%29,branch:%28default:true%29/statusIcon)](https://ci.mdavies.net/viewType.html?buildTypeId=AutofacContribNSubstitute_CI&branch_AutofacContribNSubstitute=%3Cdefault%3E&tab=buildTypeStatusDiv&guest=1) 
+[![Build status](https://ci.appveyor.com/api/projects/status/wwmq5opfp47ff937?svg=true)](https://ci.appveyor.com/project/MRCollective/autofaccontrib-nsubstitute)
 [![NuGet downloads](https://img.shields.io/nuget/dt/AutofacContrib.NSubstitute.svg)](https://www.nuget.org/packages/AutofacContrib.NSubstitute) 
 [![NuGet version](https://img.shields.io/nuget/vpre/AutofacContrib.NSubstitute.svg)](https://www.nuget.org/packages/AutofacContrib.NSubstitute)
 
