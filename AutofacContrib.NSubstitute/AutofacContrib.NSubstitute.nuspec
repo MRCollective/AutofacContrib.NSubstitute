@@ -2,7 +2,7 @@
 <package>
   <metadata>
     <id>
-       VSS.AutofacContrib.NSubstitute
+       AutofacContrib.NSubstitute
     </id>
     <version>
 		 4.6.2.0
