@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Version>4.0.2</Version>
-    <TargetFrameworks>netcoreapp1.1;net45;net46</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net45;net46</TargetFrameworks>
     <Authors>Miguel Madero;Robert Moore;Matt Davies</Authors>
     <NeutralLanguage>en-US</NeutralLanguage>
     <AssemblyTitle>AutofacContrib.NSubstitute</AssemblyTitle>
