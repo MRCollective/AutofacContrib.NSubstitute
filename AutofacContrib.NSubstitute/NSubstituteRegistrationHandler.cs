@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
+using Autofac.Features.Decorators;
 using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
@@ -29,6 +30,10 @@ namespace AutofacContrib.NSubstitute
         /// <returns>
         ///     Registrations for the service.
         /// </returns>
+        /// <remarks>
+        ///     Since Autofac v4.9.0 the DecoratorService also passed though this
+        ///     registration source, make sure this is not mocked out by a proxy.
+        /// </remarks>
         public IEnumerable<IComponentRegistration> RegistrationsFor
             (Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
         {
@@ -40,7 +45,8 @@ namespace AutofacContrib.NSubstitute
                 !typedService.ServiceType.IsInterface ||
                 IsGenericListOrCollectionInterface(typedService.ServiceType) ||
                 typedService.ServiceType.IsArray ||
-                typeof(IStartable).IsAssignableFrom(typedService.ServiceType))
+                typeof(IStartable).IsAssignableFrom(typedService.ServiceType) ||
+                service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
 
             var rb = RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] {typedService.ServiceType}, null))
