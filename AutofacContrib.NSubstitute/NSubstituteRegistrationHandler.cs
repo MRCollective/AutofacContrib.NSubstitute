@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
+using Autofac.Features.Decorators;
 using NSubstitute;
 
 namespace AutofacContrib.NSubstitute
@@ -20,16 +21,20 @@ namespace AutofacContrib.NSubstitute
             typeof(IReadOnlyList<>)
         };
 
-        /// <summary>
-        ///     Retrieve a registration for an unregistered service, to be used
-        ///     by the container.
-        /// </summary>
-        /// <param name="service">The service that was requested.</param>
-        /// <param name="registrationAccessor"></param>
-        /// <returns>
-        ///     Registrations for the service.
-        /// </returns>
-        public IEnumerable<IComponentRegistration> RegistrationsFor
+		/// <summary>
+		///     Retrieve a registration for an unregistered service, to be used
+		///     by the container.
+		/// </summary>
+		/// <param name="service">The service that was requested.</param>
+		/// <param name="registrationAccessor"></param>
+		///  <remarks>
+		///     Since Autofac v4.9.0 the DecoratorService also passed though this
+		///     registration source, make sure this is not mocked out by a proxy.
+		/// </remarks>
+		/// <returns>
+		///     Registrations for the service.
+		/// </returns>
+		public IEnumerable<IComponentRegistration> RegistrationsFor
             (Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
         {
             if (service == null)
@@ -40,7 +45,8 @@ namespace AutofacContrib.NSubstitute
                 !typedService.ServiceType.IsInterface ||
                 IsGenericListOrCollectionInterface(typedService.ServiceType) ||
                 typedService.ServiceType.IsArray ||
-                typeof(IStartable).IsAssignableFrom(typedService.ServiceType))
+                typeof(IStartable).IsAssignableFrom(typedService.ServiceType) ||
+                service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
 
             var rb = RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] {typedService.ServiceType}, null))
