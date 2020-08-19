@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Autofac.Core;
-using Autofac.Features.ResolveAnything;
 using System;
 
 namespace AutofacContrib.NSubstitute
@@ -32,7 +31,8 @@ namespace AutofacContrib.NSubstitute
         /// </summary>
         public AutoSubstitute()
         {
-            Container = Configure().InternalBuild();
+            Container = Configure()
+                .InternalBuild();
         }
 
         /// <summary>

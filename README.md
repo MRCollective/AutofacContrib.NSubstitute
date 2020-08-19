@@ -117,9 +117,10 @@ And then the following tests:
 public void Example_test_with_concrete_type_provided()
 {
     const int val = 3;
-    var autoSubstitute = new AutoSubstitute();
+    using var autoSubstitute = AutoSubstitute.Configure()
+        .Provide<IDependency2, Dependency2>(out _)
+        .Build();
     autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
-    autoSubstitute.Provide<IDependency2, Dependency2>();
     autoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
 
     var result = autoSubstitute.Resolve<MyClass>().AMethod();
@@ -132,9 +133,10 @@ public void Example_test_with_concrete_object_provide()
 {
     const int val1 = 3;
     const int val2 = 2;
-    var autoSubstitute = new AutoSubstitute();
+    using var autoSubstitute = AutoSubstitute.Configure()
+        .Provide(new ConcreteClass(val2))
+        .Build();
     autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-    autoSubstitute.Provide(new ConcreteClass(val2));
 
     var result = autoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
@@ -151,9 +153,10 @@ public void Example_test_with_substitute_for_concrete()
     const int val1 = 3;
     const int val2 = 2;
     const int val3 = 10;
-    var autoSubstitute = new AutoSubstitute();
+    using var autoSubstitute = AutoSubstitute.Configure()
+        .SubstituteFor<ConcreteClass>(val2).Configure(c => c.Add(Arg.Any<int>()).Returns(val3))
+        .Build();
     autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-    autoSubstitute.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
 
     var result = autoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
@@ -206,10 +209,9 @@ public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
     const int val1 = 2;
     const int val2 = 3;
     const int val3 = 4;
-    var AutoSubstitute = new AutoSubstitute();
-    // Much better / more maintainable than:
-    //AutoSubstitute.SubstituteFor<ConcreteClassWithDependency>(AutoSubstitute.Resolve<IDependency1>(), val1);
-    AutoSubstitute.ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1));
+    using var AutoSubstitute = AutoSubstitute.Configure()
+        .ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
+        .Build();
     AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
     AutoSubstitute.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
 
