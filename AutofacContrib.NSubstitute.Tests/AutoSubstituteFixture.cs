@@ -58,11 +58,13 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void ProvideMock()
         {
-            using (var autoSubstitute = new AutoSubstitute())
-            {
-                var mockA = Substitute.For<IServiceA>();
-                autoSubstitute.Provide(mockA);
+            var mockA = Substitute.For<IServiceA>();
 
+            using (var autoSubstitute = new AutoSubstitute(b =>
+            {
+                b.Provide(mockA);
+            }))
+            {
                 var component = autoSubstitute.Resolve<TestComponent>();
                 component.RunAll();
 
@@ -73,9 +75,12 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void ProvideImplementation()
         {
-            using (var mock = new AutoSubstitute())
+            using (var mock = new AutoSubstitute(b =>
             {
-                var serviceA = mock.Provide<IServiceA, ServiceA>();
+                b.Provide<IServiceA, ServiceA>();
+            }))
+            {
+                var serviceA = mock.Resolve<ServiceA>();
 
                 Assert.IsNotNull(serviceA);
                 Assert.IsFalse(serviceA is ICallRouter);

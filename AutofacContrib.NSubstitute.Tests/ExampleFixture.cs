@@ -69,7 +69,7 @@ namespace AutofacContrib.NSubstitute.Tests
 
         public int Double()
         {
-            return _dependency.SomeMethod(_i)*2;
+            return _dependency.SomeMethod(_i) * 2;
         }
     }
 
@@ -127,9 +127,11 @@ namespace AutofacContrib.NSubstitute.Tests
         public void Example_test_with_concrete_type_provided()
         {
             const int val = 3;
-            var AutoSubstitute = new AutoSubstitute();
+            var AutoSubstitute = new AutoSubstitute(b =>
+            {
+                b.Provide<IDependency2, Dependency2>();
+            });
             AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
-            AutoSubstitute.Provide<IDependency2, Dependency2>();
             AutoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
 
             var result = AutoSubstitute.Resolve<MyClass>().AMethod();
@@ -142,9 +144,13 @@ namespace AutofacContrib.NSubstitute.Tests
         {
             const int val1 = 3;
             const int val2 = 2;
-            var AutoSubstitute = new AutoSubstitute();
+
+            var AutoSubstitute = new AutoSubstitute(b =>
+            {
+                b.Provide(new ConcreteClass(val2));
+            });
+
             AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-            AutoSubstitute.Provide(new ConcreteClass(val2));
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
@@ -157,9 +163,12 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val1 = 3;
             const int val2 = 2;
             const int val3 = 10;
-            var AutoSubstitute = new AutoSubstitute();
+            var AutoSubstitute = new AutoSubstitute(b =>
+            {
+                b.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
+            });
+
             AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-            AutoSubstitute.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
@@ -172,16 +181,18 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val1 = 2;
             const int val2 = 3;
             const int val3 = 4;
-            var AutoSubstitute = new AutoSubstitute();
+            var AutoSubstitute = new AutoSubstitute(b =>
+            {
+                b.ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1));
+            });
             // Much better / more maintainable than:
             //AutoSubstitute.SubstituteFor<ConcreteClassWithDependency>(AutoSubstitute.Resolve<IDependency1>(), val1);
-            AutoSubstitute.ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1));
             AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
             AutoSubstitute.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
 
             var result = AutoSubstitute.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
 
-            Assert.That(result, Is.EqualTo(val2*val3*2));
+            Assert.That(result, Is.EqualTo(val2 * val3 * 2));
         }
     }
 }

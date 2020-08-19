@@ -5,11 +5,12 @@ VisualStudioVersion = 16.0.29409.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutofacContrib.NSubstitute", "AutofacContrib.NSubstitute\AutofacContrib.NSubstitute.csproj", "{7E69ECB4-84A5-41F0-8497-D94A3A45757F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutofacContrib.NSubstitute.Tests", "AutofacContrib.NSubstitute.Tests\AutofacContrib.NSubstitute.Tests.csproj", "{56FF83E0-BCB9-4391-9BCC-912347C84398}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AutofacContrib.NSubstitute.Tests", "AutofacContrib.NSubstitute.Tests\AutofacContrib.NSubstitute.Tests.csproj", "{56FF83E0-BCB9-4391-9BCC-912347C84398}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A5ECD18F-1D42-444E-BB3A-6062D8B0E256}"
 	ProjectSection(SolutionItems) = preProject
 		BREAKING_CHANGES.md = BREAKING_CHANGES.md
+		global.json = global.json
 		LICENSE = LICENSE
 		logo.png = logo.png
 		README.md = README.md

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Autofac;
 using NSubstitute;
 using NUnit.Framework;
 
@@ -78,10 +79,14 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestIEnumerableCorrectlyResolves()
         {
-            using(var autosub = new AutoSubstitute())
+            using (var autosub = new AutoSubstitute(b =>
+             {
+                 b.Provide<IServiceItem, ServiceItemA>();
+                 b.Provide<IServiceItem, ServiceItemB>();
+             }))
             {
-                var mockA = autosub.Provide<IServiceItem, ServiceItemA>();
-                var mockB = autosub.Provide<IServiceItem, ServiceItemB>();
+                var mockA = autosub.Resolve<ServiceItemA>();
+                var mockB = autosub.Resolve<ServiceItemB>();
                 var component = autosub.Resolve<TestIEnumerableComponent>();
 
                 Assert.That(component.ServiceItems, Is.Not.Empty);
@@ -93,10 +98,14 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestIListCorrectlyResolves()
         {
-            using(var autosub = new AutoSubstitute())
+            using (var autosub = new AutoSubstitute(b =>
             {
-                var mockA = autosub.Provide<IServiceItem, ServiceItemA>();
-                var mockB = autosub.Provide<IServiceItem, ServiceItemB>();
+                b.Provide<IServiceItem, ServiceItemA>();
+                b.Provide<IServiceItem, ServiceItemB>();
+            }))
+            {
+                var mockA = autosub.Resolve<ServiceItemA>();
+                var mockB = autosub.Resolve<ServiceItemB>();
                 var component = autosub.Resolve<TestIListComponent>();
 
                 Assert.That(component.ServiceItems, Is.Not.Empty);
@@ -108,10 +117,14 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestIReadOnlyCollectionCorrectlyResolves()
         {
-            using(var autosub = new AutoSubstitute())
+            using (var autosub = new AutoSubstitute(b =>
             {
-                var mockA = autosub.Provide<IServiceItem, ServiceItemA>();
-                var mockB = autosub.Provide<IServiceItem, ServiceItemB>();
+                b.Provide<IServiceItem, ServiceItemA>();
+                b.Provide<IServiceItem, ServiceItemB>();
+            }))
+            {
+                var mockA = autosub.Resolve<ServiceItemA>();
+                var mockB = autosub.Resolve<ServiceItemB>();
                 var component = autosub.Resolve<TestIReadOnlyCollectionComponent>();
 
                 Assert.That(component.ServiceItems, Is.Not.Empty);
@@ -123,10 +136,14 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestICollectionCorrectlyResolves()
         {
-            using(var autosub = new AutoSubstitute())
+            using (var autosub = new AutoSubstitute(b =>
             {
-                var mockA = autosub.Provide<IServiceItem, ServiceItemA>();
-                var mockB = autosub.Provide<IServiceItem, ServiceItemB>();
+                b.Provide<IServiceItem, ServiceItemA>();
+                b.Provide<IServiceItem, ServiceItemB>();
+            }))
+            {
+                var mockA = autosub.Resolve<ServiceItemA>();
+                var mockB = autosub.Resolve<ServiceItemB>();
                 var component = autosub.Resolve<TestICollectionComponent>();
 
                 Assert.That(component.ServiceItems, Is.Not.Empty);
@@ -138,10 +155,14 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestIReadOnlyListCorrectlyResolves()
         {
-            using(var autosub = new AutoSubstitute())
+            using (var autosub = new AutoSubstitute(b =>
             {
-                var mockA = autosub.Provide<IServiceItem, ServiceItemA>();
-                var mockB = autosub.Provide<IServiceItem, ServiceItemB>();
+                b.Provide<IServiceItem, ServiceItemA>();
+                b.Provide<IServiceItem, ServiceItemB>();
+            }))
+            {
+                var mockA = autosub.Resolve<ServiceItemA>();
+                var mockB = autosub.Resolve<ServiceItemB>();
                 var component = autosub.Resolve<TestIReadOnlyListComponent>();
 
                 Assert.That(component.ServiceItems, Is.Not.Empty);

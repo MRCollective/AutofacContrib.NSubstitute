@@ -50,11 +50,13 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public static void ShouldAcceptProvidedIndexedDependency()
         {
-            var autoSubstitute = new AutoSubstitute();
             var substitute = Substitute.For<IDependency2>();
+            var autoSubstitute = new AutoSubstitute(b =>
+            {
+                b.Provide(substitute, Switch.On);
+            });
             substitute.SomeOtherMethod().Returns(5);
-            autoSubstitute.Provide(substitute, Switch.On);
-            
+
             var target = autoSubstitute.Resolve<ClassWithKeyedDependencies>();
 
             Assert.That(target.OnDependency.SomeOtherMethod(), Is.EqualTo(5));
