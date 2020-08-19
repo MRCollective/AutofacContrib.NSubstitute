@@ -79,96 +79,76 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void TestIEnumerableCorrectlyResolves()
         {
-            using (var autosub = new AutoSubstitute(b =>
-             {
-                 b.Provide<IServiceItem, ServiceItemA>();
-                 b.Provide<IServiceItem, ServiceItemB>();
-             }))
-            {
-                var mockA = autosub.Resolve<ServiceItemA>();
-                var mockB = autosub.Resolve<ServiceItemB>();
-                var component = autosub.Resolve<TestIEnumerableComponent>();
+            using var autosub = AutoSubstitute.Configure()
+                .Provide<IServiceItem, ServiceItemA>(out var mockA)
+                .Provide<IServiceItem, ServiceItemB>(out var mockB)
+                .Build();
 
-                Assert.That(component.ServiceItems, Is.Not.Empty);
-                Assert.That(component.ServiceItems.Contains(mockA), Is.True);
-                Assert.That(component.ServiceItems.Contains(mockB), Is.True);
-            }
+            var component = autosub.Resolve<TestIEnumerableComponent>();
+
+            Assert.That(component.ServiceItems, Is.Not.Empty);
+            Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
+            Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
 
         [Test]
         public void TestIListCorrectlyResolves()
         {
-            using (var autosub = new AutoSubstitute(b =>
-            {
-                b.Provide<IServiceItem, ServiceItemA>();
-                b.Provide<IServiceItem, ServiceItemB>();
-            }))
-            {
-                var mockA = autosub.Resolve<ServiceItemA>();
-                var mockB = autosub.Resolve<ServiceItemB>();
-                var component = autosub.Resolve<TestIListComponent>();
+            using var autosub = AutoSubstitute.Configure()
+                .Provide<IServiceItem, ServiceItemA>(out var mockA)
+                .Provide<IServiceItem, ServiceItemB>(out var mockB)
+                .Build();
 
-                Assert.That(component.ServiceItems, Is.Not.Empty);
-                Assert.That(component.ServiceItems.Contains(mockA), Is.True);
-                Assert.That(component.ServiceItems.Contains(mockB), Is.True);
-            }
+            var component = autosub.Resolve<TestIListComponent>();
+
+            Assert.That(component.ServiceItems, Is.Not.Empty);
+            Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
+            Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
 
         [Test]
         public void TestIReadOnlyCollectionCorrectlyResolves()
         {
-            using (var autosub = new AutoSubstitute(b =>
-            {
-                b.Provide<IServiceItem, ServiceItemA>();
-                b.Provide<IServiceItem, ServiceItemB>();
-            }))
-            {
-                var mockA = autosub.Resolve<ServiceItemA>();
-                var mockB = autosub.Resolve<ServiceItemB>();
-                var component = autosub.Resolve<TestIReadOnlyCollectionComponent>();
+            using var autosub = AutoSubstitute.Configure()
+                .Provide<IServiceItem, ServiceItemA>(out var mockA)
+                .Provide<IServiceItem, ServiceItemB>(out var mockB)
+                .Build();
 
-                Assert.That(component.ServiceItems, Is.Not.Empty);
-                Assert.That(component.ServiceItems.Contains(mockA), Is.True);
-                Assert.That(component.ServiceItems.Contains(mockB), Is.True);
-            }
+            var component = autosub.Resolve<TestIReadOnlyCollectionComponent>();
+
+            Assert.That(component.ServiceItems, Is.Not.Empty);
+            Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
+            Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
 
         [Test]
         public void TestICollectionCorrectlyResolves()
         {
-            using (var autosub = new AutoSubstitute(b =>
-            {
-                b.Provide<IServiceItem, ServiceItemA>();
-                b.Provide<IServiceItem, ServiceItemB>();
-            }))
-            {
-                var mockA = autosub.Resolve<ServiceItemA>();
-                var mockB = autosub.Resolve<ServiceItemB>();
-                var component = autosub.Resolve<TestICollectionComponent>();
+            using var autosub = AutoSubstitute.Configure()
+                .Provide<IServiceItem, ServiceItemA>(out var mockA)
+                .Provide<IServiceItem, ServiceItemB>(out var mockB)
+                .Build();
 
-                Assert.That(component.ServiceItems, Is.Not.Empty);
-                Assert.That(component.ServiceItems.Contains(mockA), Is.True);
-                Assert.That(component.ServiceItems.Contains(mockB), Is.True);
-            }
+            var component = autosub.Resolve<TestICollectionComponent>();
+
+            Assert.That(component.ServiceItems, Is.Not.Empty);
+            Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
+            Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
 
         [Test]
         public void TestIReadOnlyListCorrectlyResolves()
         {
-            using (var autosub = new AutoSubstitute(b =>
-            {
-                b.Provide<IServiceItem, ServiceItemA>();
-                b.Provide<IServiceItem, ServiceItemB>();
-            }))
-            {
-                var mockA = autosub.Resolve<ServiceItemA>();
-                var mockB = autosub.Resolve<ServiceItemB>();
-                var component = autosub.Resolve<TestIReadOnlyListComponent>();
+            using var autosub = AutoSubstitute.Configure()
+                .Provide<IServiceItem, ServiceItemA>(out var mockA)
+                .Provide<IServiceItem, ServiceItemB>(out var mockB)
+                .Build();
 
-                Assert.That(component.ServiceItems, Is.Not.Empty);
-                Assert.That(component.ServiceItems.Contains(mockA), Is.True);
-                Assert.That(component.ServiceItems.Contains(mockB), Is.True);
-            }
+            var component = autosub.Resolve<TestIReadOnlyListComponent>();
+
+            Assert.That(component.ServiceItems, Is.Not.Empty);
+            Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
+            Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
     }
 }

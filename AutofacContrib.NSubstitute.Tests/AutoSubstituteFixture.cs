@@ -49,10 +49,9 @@ namespace AutofacContrib.NSubstitute.Tests
         [Test]
         public void DefaultConstructorIsLoose()
         {
-            using (var mock = new AutoSubstitute())
-            {
-                RunWithSingleSetupationTest(mock);
-            }
+            using var mock = new AutoSubstitute();
+
+            RunWithSingleSetupationTest(mock);
         }
 
         [Test]
@@ -60,64 +59,56 @@ namespace AutofacContrib.NSubstitute.Tests
         {
             var mockA = Substitute.For<IServiceA>();
 
-            using (var autoSubstitute = new AutoSubstitute(b =>
-            {
-                b.Provide(mockA);
-            }))
-            {
-                var component = autoSubstitute.Resolve<TestComponent>();
-                component.RunAll();
+            using var autoSubstitute = AutoSubstitute.Configure()
+                .Provide(mockA)
+                .Build();
 
-                mockA.Received().RunA();
-            }
+            var component = autoSubstitute.Resolve<TestComponent>();
+            component.RunAll();
+
+            mockA.Received().RunA();
         }
 
         [Test]
         public void ProvideImplementation()
         {
-            using (var mock = new AutoSubstitute(b =>
-            {
-                b.Provide<IServiceA, ServiceA>();
-            }))
-            {
-                var serviceA = mock.Resolve<ServiceA>();
+            using var mock = AutoSubstitute.Configure()
+                .Provide<IServiceA, ServiceA>(out var serviceA)
+                .Build();
 
-                Assert.IsNotNull(serviceA);
-                Assert.IsFalse(serviceA is ICallRouter);
-            }
+            Assert.IsNotNull(serviceA.Value);
+            Assert.IsFalse(serviceA.Value is ICallRouter);
         }
 
         [Test]
         public void DefaultConstructorWorksWithAllTests()
         {
-            using (var mock = new AutoSubstitute())
-            {
-                RunTest(mock);
-            }
+            using var mock = new AutoSubstitute();
+
+            RunTest(mock);
         }
 
         [Test]
         public void WorksWithUnmetSetupations()
         {
-            using (var loose = new AutoSubstitute())
-            {
-                RunWithSingleSetupationTest(loose);
-            }
+            using var loose = new AutoSubstitute();
+
+            RunWithSingleSetupationTest(loose);
         }
 
         [Test]
         public void NormalSetupationsAreVerified()
         {
-            using (var mock = new AutoSubstitute())
-            {
-                Assert.That(() => SetUpSetupations(mock), Throws.TypeOf<ReceivedCallsException>());
-            }
+            using var mock = new AutoSubstitute();
+
+            Assert.That(() => SetUpSetupations(mock), Throws.TypeOf<ReceivedCallsException>());
         }
 
         [Test]
         public void ProperInitializationIsPerformed()
         {
-            var autoSubstitute = new AutoSubstitute();
+            using var autoSubstitute = new AutoSubstitute();
+
             Assert.IsNotNull(autoSubstitute.Container);
         }
 

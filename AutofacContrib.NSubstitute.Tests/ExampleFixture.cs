@@ -127,14 +127,15 @@ namespace AutofacContrib.NSubstitute.Tests
         public void Example_test_with_concrete_type_provided()
         {
             const int val = 3;
-            var AutoSubstitute = new AutoSubstitute(b =>
-            {
-                b.Provide<IDependency2, Dependency2>();
-            });
-            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
-            AutoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
 
-            var result = AutoSubstitute.Resolve<MyClass>().AMethod();
+            using var mock = AutoSubstitute.Configure()
+                .Provide<IDependency2, Dependency2>(out _)
+                .Build();
+
+            mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
+            mock.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
+
+            var result = mock.Resolve<MyClass>().AMethod();
 
             Assert.That(result, Is.EqualTo(Dependency2.Value));
         }
@@ -145,14 +146,13 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val1 = 3;
             const int val2 = 2;
 
-            var AutoSubstitute = new AutoSubstitute(b =>
-            {
-                b.Provide(new ConcreteClass(val2));
-            });
+            var mock = AutoSubstitute.Configure()
+                .Provide(new ConcreteClass(val2))
+                .Build();
 
-            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+            mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
 
-            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
+            var result = mock.Resolve<MyClassWithConcreteDependency>().AMethod();
 
             Assert.That(result, Is.EqualTo(val1 + val2));
         }
@@ -163,14 +163,14 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val1 = 3;
             const int val2 = 2;
             const int val3 = 10;
-            var AutoSubstitute = new AutoSubstitute(b =>
-            {
-                b.SubstituteFor<ConcreteClass>(val2).Add(Arg.Any<int>()).Returns(val3);
-            });
 
-            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+            using var utoSubstitute = AutoSubstitute.Configure()
+                .SubstituteFor<ConcreteClass>(val2).Configure(c => c.Add(Arg.Any<int>()).Returns(val3))
+                .Build();
 
-            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
+            utoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+
+            var result = utoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
             Assert.That(result, Is.EqualTo(val3));
         }
@@ -181,16 +181,15 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val1 = 2;
             const int val2 = 3;
             const int val3 = 4;
-            var AutoSubstitute = new AutoSubstitute(b =>
-            {
-                b.ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1));
-            });
-            // Much better / more maintainable than:
-            //AutoSubstitute.SubstituteFor<ConcreteClassWithDependency>(AutoSubstitute.Resolve<IDependency1>(), val1);
-            AutoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
-            AutoSubstitute.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
 
-            var result = AutoSubstitute.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
+            using var mock = AutoSubstitute.Configure()
+                .ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
+                .Build();
+
+            mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
+            mock.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
+
+            var result = mock.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
 
             Assert.That(result, Is.EqualTo(val2 * val3 * 2));
         }
