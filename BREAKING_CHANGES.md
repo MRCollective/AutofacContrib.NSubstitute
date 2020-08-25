@@ -1,6 +1,17 @@
 AutofacContrib.NSubstitute (AutoSubstitute) Breaking Changes
 ============================================================
 
+Version 6.0.0
+-------------
+
+Removed `AutoSubstitute.Provide(...)` methods and added `AutoSubstitute.Configure()` with a builder pattern.
+
+### Reason
+Autofac now enforces immutability and containers cannot be changed after being built.
+
+### Workaround
+Update usage of `.Provide(...)` to use the builder pattern instead.
+
 Version 4.0.0
 -------------
 
