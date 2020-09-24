@@ -9,6 +9,7 @@ namespace AutofacContrib.NSubstitute
 {
     public class AutoSubstituteBuilder
     {
+        private readonly Dictionary<Type, object> _substituteForRegistrations = new Dictionary<Type, object>();
         private readonly List<IProvidedValue> _providedValues;
         private readonly ContainerBuilder _builder;
 
@@ -53,6 +54,7 @@ namespace AutofacContrib.NSubstitute
         /// </summary>
         /// <typeparam name="TService">The type to register the implementation as</typeparam>
         /// <typeparam name="TImplementation">The implementation type</typeparam>
+        /// <param name="providedValue">Parameter to obtain a provided value.</param>
         /// <param name="parameters">Optional constructor parameters</param>
         /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
         public AutoSubstituteBuilder Provide<TService, TImplementation>(out IProvidedValue<TService> providedValue, params Parameter[] parameters)
@@ -112,11 +114,19 @@ namespace AutofacContrib.NSubstitute
         public SubstituteForBuilder<TService> SubstituteFor<TService>(params object[] parameters)
             where TService : class
         {
-            var substitute = Substitute.For<TService>(parameters);
+            if (_substituteForRegistrations.TryGetValue(typeof(TService), out var result))
+            {
+                return (SubstituteForBuilder<TService>)result;
+            }
 
-            Provide(substitute);
+            var registration = _builder.Register(_ => Substitute.For<TService>(parameters))
+                .As<TService>()
+                .InstancePerLifetimeScope();
+            var builder = new SubstituteForBuilder<TService>(this, registration);
 
-            return new SubstituteForBuilder<TService>(this, substitute);
+            _substituteForRegistrations.Add(typeof(TService), builder);
+
+            return builder;
         }
 
         /// <summary>
@@ -136,7 +146,7 @@ namespace AutofacContrib.NSubstitute
             return this;
         }
 
-        private IProvidedValue<TService> CreateProvidedValue<TService>(Func<IContainer, TService> factory)
+        internal IProvidedValue<TService> CreateProvidedValue<TService>(Func<IContainer, TService> factory)
         {
             var value = new ProvidedValue<TService>(factory);
 
