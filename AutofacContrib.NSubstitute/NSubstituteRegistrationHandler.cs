@@ -21,20 +21,27 @@ namespace AutofacContrib.NSubstitute
             typeof(IReadOnlyList<>)
         };
 
-		/// <summary>
-		///     Retrieve a registration for an unregistered service, to be used
-		///     by the container.
-		/// </summary>
-		/// <param name="service">The service that was requested.</param>
-		/// <param name="registrationAccessor"></param>
-		///  <remarks>
-		///     Since Autofac v4.9.0 the DecoratorService also passed though this
-		///     registration source, make sure this is not mocked out by a proxy.
-		/// </remarks>
-		/// <returns>
-		///     Registrations for the service.
-		/// </returns>
-		public IEnumerable<IComponentRegistration> RegistrationsFor
+        private readonly AutoSubstituteOptions _options;
+
+        public NSubstituteRegistrationHandler(AutoSubstituteOptions options)
+        {
+            _options = options;
+        }
+
+        /// <summary>
+        ///     Retrieve a registration for an unregistered service, to be used
+        ///     by the container.
+        /// </summary>
+        /// <param name="service">The service that was requested.</param>
+        /// <param name="registrationAccessor"></param>
+        ///  <remarks>
+        ///     Since Autofac v4.9.0 the DecoratorService also passed though this
+        ///     registration source, make sure this is not mocked out by a proxy.
+        /// </remarks>
+        /// <returns>
+        ///     Registrations for the service.
+        /// </returns>
+        public IEnumerable<IComponentRegistration> RegistrationsFor
             (Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
         {
             if (service == null)
@@ -49,11 +56,23 @@ namespace AutofacContrib.NSubstitute
                 service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
 
-            var rb = RegistrationBuilder.ForDelegate((c, p) => Substitute.For(new[] {typedService.ServiceType}, null))
+            var rb = RegistrationBuilder
+                .ForDelegate((c, p) =>
+                {
+                    var instance = Substitute.For(new[] { typedService.ServiceType }, null);
+                    var ctx = c.Resolve<IComponentContext>();
+
+                    foreach (var handler in _options.MockHandlers)
+                    {
+                        handler.OnMockCreated(instance, typedService.ServiceType, ctx);
+                    }
+
+                    return instance;
+                })
                 .As(service)
                 .InstancePerLifetimeScope();
 
-            return new[] {rb.CreateRegistration()};
+            return new[] { rb.CreateRegistration() };
         }
 
         public bool IsAdapterForIndividualComponents
