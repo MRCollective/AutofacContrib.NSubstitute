@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using NSubstitute.Core;
 using System;
 
 namespace AutofacContrib.NSubstitute
@@ -18,6 +19,7 @@ namespace AutofacContrib.NSubstitute
         /// <param name="instance">The mock instance.</param>
         /// <param name="type">The type the mock was created for.</param>
         /// <param name="context">The current component context.</param>
-        public abstract void OnMockCreated(object instance, Type type, IComponentContext context);
+        /// <param name="substitutionContext">The current substitution context.</param>
+        public abstract void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext);
     }
 }

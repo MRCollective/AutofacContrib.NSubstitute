@@ -6,6 +6,7 @@ using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Features.Decorators;
 using NSubstitute;
+using NSubstitute.Core;
 
 namespace AutofacContrib.NSubstitute
 {
@@ -64,7 +65,7 @@ namespace AutofacContrib.NSubstitute
 
                     foreach (var handler in _options.MockHandlers)
                     {
-                        handler.OnMockCreated(instance, typedService.ServiceType, ctx);
+                        handler.OnMockCreated(instance, typedService.ServiceType, ctx, SubstitutionContext.Current);
                     }
 
                     return instance;
