@@ -185,35 +185,6 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        public void SubstituteForAndProvide()
-        {
-            const int val = 2;
-
-            using var utoSubstitute = AutoSubstitute.Configure()
-                .SubstituteFor<ConcreteClass>(val).Provide(out var concreteClass).Configured()
-                .Build()
-                .Container;
-
-            concreteClass.Value.AssertIsNSubstituteMock();
-            Assert.AreSame(concreteClass.Value, utoSubstitute.Resolve<ConcreteClass>());
-        }
-
-        [Test]
-        public void SubstituteTwice()
-        {
-            const int val = 2;
-
-            using var utoSubstitute = AutoSubstitute.Configure()
-                .SubstituteFor<ConcreteClass>(val).Provide(out var concreteClass1).Configured()
-                .SubstituteFor<ConcreteClass>(val).Provide(out var concreteClass2).Configured()
-                .Build()
-                .Container;
-
-            concreteClass1.Value.AssertIsNSubstituteMock();
-            Assert.AreSame(concreteClass1.Value, concreteClass2.Value);
-        }
-
-        [Test]
         public void SubstituteForConfigureWithContext()
         {
             const int val = 2;

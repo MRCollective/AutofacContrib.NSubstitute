@@ -47,20 +47,6 @@ namespace AutofacContrib.NSubstitute
         /// Completes the configuration of the substitute.
         /// </summary>
         /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
-        public AutoSubstituteBuilder Configured()
-        {
-            return _builder;
-        }
-
-        /// <summary>
-        /// Allows a way to access the services being configured that the container will provide.
-        /// </summary>
-        /// <param name="service">Parameter to obtain the substituted value.</param>
-        /// <returns></returns>
-        public SubstituteForBuilder<TService> Provide(out IProvidedValue<TService> service)
-        {
-            service = _builder.CreateProvidedValue(c => c.Resolve<TService>());
-            return this;
-        }
+        public AutoSubstituteBuilder Configured() => _builder;
     }
 }
