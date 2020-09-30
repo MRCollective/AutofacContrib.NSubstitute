@@ -91,6 +91,8 @@ namespace AutofacContrib.NSubstitute
 
             providedValue = CreateProvidedValue<TService>(c => c.ResolveKeyed<TService>(key));
 
+            SkipMockIfNeeded<TService>();
+
             return this;
         }
 
@@ -104,6 +106,8 @@ namespace AutofacContrib.NSubstitute
             where TService : class
         {
             _builder.RegisterInstance(instance);
+
+            SkipMockIfNeeded<TService>();
 
             return this;
         }
@@ -162,6 +166,14 @@ namespace AutofacContrib.NSubstitute
                 .InstancePerLifetimeScope();
 
             return this;
+        }
+
+        private void SkipMockIfNeeded<T>()
+        {
+            if (_options.AutomaticallySkipMocksForProvidedValues)
+            {
+                _options.TypesToSkipForMocking.Add(typeof(T));
+            }
         }
 
         private SubstituteForBuilder<TService> CreateSubstituteForBuilder<TService>(Func<TService> factory, bool isSubstituteFor)

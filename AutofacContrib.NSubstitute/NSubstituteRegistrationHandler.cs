@@ -46,9 +46,12 @@ namespace AutofacContrib.NSubstitute
             (Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
         {
             if (service == null)
-                throw new ArgumentNullException("service");
+            {
+                throw new ArgumentNullException(nameof(service));
+            }
 
             var typedService = service as IServiceWithType;
+
             if (typedService == null ||
                 !typedService.ServiceType.IsInterface ||
                 IsGenericListOrCollectionInterface(typedService.ServiceType) ||
@@ -56,6 +59,11 @@ namespace AutofacContrib.NSubstitute
                 typeof(IStartable).IsAssignableFrom(typedService.ServiceType) ||
                 service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
+
+            if (_options.TypesToSkipForMocking.Contains(typedService.ServiceType))
+            {
+                return Enumerable.Empty<IComponentRegistration>();
+            }
 
             var rb = RegistrationBuilder
                 .ForDelegate((c, p) =>
