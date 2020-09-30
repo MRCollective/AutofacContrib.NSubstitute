@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using NSubstitute;
+using NSubstitute.Extensions;
 using NUnit.Framework;
 
 namespace AutofacContrib.NSubstitute.Tests
@@ -38,6 +39,14 @@ namespace AutofacContrib.NSubstitute.Tests
         public int AMethod()
         {
             return _d1.SomeMethod(_d2.SomeOtherMethod());
+        }
+    }
+
+    public class ConcreteClassWithObject
+    {
+        public virtual object GetResult()
+        {
+            return new object();
         }
     }
 
@@ -173,6 +182,25 @@ namespace AutofacContrib.NSubstitute.Tests
             var result = utoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
 
             Assert.That(result, Is.EqualTo(val3));
+        }
+
+        [Test]
+        public void SubstituteForConfigureWithContext()
+        {
+            const int val = 2;
+
+            using var utoSubstitute = AutoSubstitute.Configure()
+                .SubstituteFor<ConcreteClass>(val).Configured()
+                .SubstituteFor<ConcreteClassWithObject>().Configure((s, ctx) =>
+                {
+                    s.Configure().GetResult().Returns(ctx.Resolve<ConcreteClass>());
+                })
+                .Build()
+                .Container;
+
+            var result = utoSubstitute.Resolve<ConcreteClassWithObject>().GetResult();
+
+            Assert.AreSame(result, utoSubstitute.Resolve<ConcreteClass>());
         }
 
         [Test]

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Autofac;
+using Autofac.Builder;
+using System;
 
 namespace AutofacContrib.NSubstitute
 {
@@ -10,12 +12,12 @@ namespace AutofacContrib.NSubstitute
         where TService : class
     {
         private readonly AutoSubstituteBuilder _builder;
-        private readonly TService _service;
+        private readonly IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> _registration;
 
-        internal SubstituteForBuilder(AutoSubstituteBuilder builder, TService service)
+        internal SubstituteForBuilder(AutoSubstituteBuilder builder, IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> registration)
         {
             _builder = builder;
-            _service = service;
+            _registration = registration;
         }
 
         /// <summary>
@@ -24,10 +26,27 @@ namespace AutofacContrib.NSubstitute
         /// <param name="action">The delegate to configure the service.</param>
         /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
         public AutoSubstituteBuilder Configure(Action<TService> action)
+            => Configure((s, _) => action(s));
+
+        /// <summary>
+        /// Allows for configuration of the service with access to the resolved components.
+        /// </summary>
+        /// <param name="action">The delegate to configure the service.</param>
+        /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Configure(Action<TService, IComponentContext> action)
         {
-            action(_service);
+            _registration.OnActivated(args =>
+            {
+                action(args.Instance, args.Context);
+            });
+
             return _builder;
         }
-    }
 
+        /// <summary>
+        /// Completes the configuration of the substitute.
+        /// </summary>
+        /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Configured() => _builder;
+    }
 }
