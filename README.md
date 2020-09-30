@@ -164,6 +164,29 @@ public void Example_test_with_substitute_for_concrete()
 }
 ```
 
+If you want to configure it with a service from the container, you can use a separate overload:
+
+```c#
+[Test]
+public void SubstituteForConfigureWithContext()
+{
+	const int val = 2;
+
+	using var utoSubstitute = AutoSubstitute.Configure()
+		.SubstituteFor<ConcreteClass>(val).Configured()
+		.SubstituteFor<ConcreteClassWithObject>().Configure((s, ctx) =>
+		{
+			s.Configure().GetResult().Returns(ctx.Resolve<ConcreteClass>());
+		})
+		.Build()
+		.Container;
+
+	var result = utoSubstitute.Resolve<ConcreteClassWithObject>().GetResult();
+
+	Assert.AreSame(result, utoSubstitute.Resolve<ConcreteClass>());
+}
+```
+
 Similarly, you can resolve a concrete type from the autosubstitute container and register that with the underlying container using the `ResolveAndSubstituteFor` method:
 
 ```c#
