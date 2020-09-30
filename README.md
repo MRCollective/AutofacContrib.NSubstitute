@@ -187,7 +187,28 @@ public void SubstituteForConfigureWithContext()
 }
 ```
 
-Similarly, you can resolve a concrete type from the autosubstitute container and register that with the underlying container using the `ResolveAndSubstituteFor` method:
+If you would rather register it using NSubstitute's `SubstituteForPartsOf` method, you may use the following:
+
+```c#
+public abstract class Test1
+{
+	public virtual object Throws() => throw new InvalidOperationException();
+}
+
+[Test]
+public void BaseCalledOnSubstituteForPartsOf()
+{
+    using var mock = AutoSubstitute.Configure()
+        .SubstituteForPartsOf<Test1>().Configured()
+        .Build();
+
+    var test1 = mock.Resolve<Test1>();
+
+    Assert.Throws<InvalidOperationException>(() => test1.Throws());
+}
+```
+
+Similarly, you can resolve a concrete type from the AutoSubstitute container and register that with the underlying container using the `ResolveAndSubstituteFor` method:
 
 ```c#
 public class ConcreteClassWithDependency

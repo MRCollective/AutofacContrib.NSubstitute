@@ -167,43 +167,6 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        public void Example_test_with_substitute_for_concrete()
-        {
-            const int val1 = 3;
-            const int val2 = 2;
-            const int val3 = 10;
-
-            using var utoSubstitute = AutoSubstitute.Configure()
-                .SubstituteFor<ConcreteClass>(val2).Configure(c => c.Add(Arg.Any<int>()).Returns(val3))
-                .Build();
-
-            utoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
-
-            var result = utoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
-
-            Assert.That(result, Is.EqualTo(val3));
-        }
-
-        [Test]
-        public void SubstituteForConfigureWithContext()
-        {
-            const int val = 2;
-
-            using var utoSubstitute = AutoSubstitute.Configure()
-                .SubstituteFor<ConcreteClass>(val).Configured()
-                .SubstituteFor<ConcreteClassWithObject>().Configure((s, ctx) =>
-                {
-                    s.Configure().GetResult().Returns(ctx.Resolve<ConcreteClass>());
-                })
-                .Build()
-                .Container;
-
-            var result = utoSubstitute.Resolve<ConcreteClassWithObject>().GetResult();
-
-            Assert.AreSame(result, utoSubstitute.Resolve<ConcreteClass>());
-        }
-
-        [Test]
         public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
         {
             const int val1 = 2;

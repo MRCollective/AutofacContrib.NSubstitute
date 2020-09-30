@@ -104,30 +104,26 @@ namespace AutofacContrib.NSubstitute
         }
 
         /// <summary>
-        /// Registers to the container and returns a substitute for a given concrete class given the explicit constructor parameters.
+        /// Registers a substitute to the container a given concrete class given the explicit constructor parameters using <see cref="Substitute.For{TService}(object[])"/>.
         /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
-        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}(TService)"/> so that type is used on dependencies for other Resolved types.
         /// </summary>
         /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
         /// <param name="parameters">Optional constructor parameters</param>
         /// <returns>An instance to help configure the substitution.</returns>
         public SubstituteForBuilder<TService> SubstituteFor<TService>(params object[] parameters)
             where TService : class
-        {
-            if (_substituteForRegistrations.TryGetValue(typeof(TService), out var result))
-            {
-                return (SubstituteForBuilder<TService>)result;
-            }
+            => CreateSubstituteForBuilder<TService>(() => Substitute.For<TService>(parameters), true);
 
-            var registration = _builder.Register(_ => Substitute.For<TService>(parameters))
-                .As<TService>()
-                .InstancePerLifetimeScope();
-            var builder = new SubstituteForBuilder<TService>(this, registration);
-
-            _substituteForRegistrations.Add(typeof(TService), builder);
-
-            return builder;
-        }
+        /// <summary>
+        /// Registers a substitute to the container a given concrete class given the explicit constructor parameters using <see cref="Substitute.ForPartsOf{TService}(object[])"/>.
+        /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
+        /// </summary>
+        /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>An instance to help configure the substitution.</returns>
+        public SubstituteForBuilder<TService> SubstituteForPartsOf<TService>(params object[] parameters)
+            where TService : class
+            => CreateSubstituteForBuilder(() => Substitute.ForPartsOf<TService>(parameters), false);
 
         /// <summary>
         /// Registers to the container and returns a substitute for a given concrete class using autofac to resolve the constructor parameters.
@@ -144,6 +140,31 @@ namespace AutofacContrib.NSubstitute
                 .InstancePerLifetimeScope();
 
             return this;
+        }
+
+        private SubstituteForBuilder<TService> CreateSubstituteForBuilder<TService>(Func<TService> factory, bool isSubstituteFor)
+            where TService : class
+        {
+            if (_substituteForRegistrations.TryGetValue(typeof(TService), out var result))
+            {
+                var previousBuilder = (SubstituteForBuilder<TService>)result;
+
+                if (previousBuilder.IsSubstituteFor != isSubstituteFor)
+                {
+                    throw new InvalidOperationException("Cannot change a service registration between SubstituteFor and SubstituteForPartsOf");
+                }
+
+                return previousBuilder;
+            }
+
+            var registration = _builder.Register(_ => factory())
+                .As<TService>()
+                .InstancePerLifetimeScope();
+            var builder = new SubstituteForBuilder<TService>(this, registration, isSubstituteFor);
+
+            _substituteForRegistrations.Add(typeof(TService), builder);
+
+            return builder;
         }
 
         internal IProvidedValue<TService> CreateProvidedValue<TService>(Func<IContainer, TService> factory)
