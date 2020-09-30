@@ -72,7 +72,68 @@ namespace AutofacContrib.NSubstitute
         }
 
         /// <summary>
-        /// Register the specified implementation type to the container as the specified service type and resolve it using the given parameters.
+        /// Register the specified implementation type to the container as itself with the given parameterst.
+        /// </summary>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <typeparam name="TImplementation">The implementation type</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Provide<TService>(params Parameter[] parameters)
+            => Provide<TService, TService>(out _, parameters);
+
+        /// <summary>
+        /// Register the type with the given factory to the container. 
+        /// </summary>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <param name="providedValue">Parameter to obtain a provided value.</param>
+        /// <param name="factory">The factory method to produce the service.</param>
+        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Provide<TService>(out IProvidedValue<TService> providedValue, Func<IComponentContext, TService> factory)
+        {
+            var key = new object();
+
+            _builder.Register(factory)
+                .Keyed<TService>(key)
+                .As<TService>()
+                .InstancePerLifetimeScope();
+
+            providedValue = CreateProvidedValue<TService>(c => c.ResolveKeyed<TService>(key));
+
+            return this;
+        }
+
+        /// <summary>
+        /// Register the type with the given factory to the container. 
+        /// </summary>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <param name="factory">The factory method to produce the service.</param>
+        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Provide<TService>(Func<IComponentContext, TService> factory)
+            => Provide(out _, factory);
+
+        /// <summary>
+        /// Register the specified implementation type to the container as itself with the given parameters.
+        /// </summary>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <typeparam name="TImplementation">The implementation type</typeparam>
+        /// <param name="providedValue">Parameter to obtain a provided value.</param>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Provide<TService>(out IProvidedValue<TService> providedValue, params Parameter[] parameters)
+            => Provide<TService, TService>(out providedValue, parameters);
+
+        /// <summary>
+        /// Register the specified implementation type to the container as the specified service type with the given parameterst.
+        /// </summary>
+        /// <typeparam name="TService">The type to register the implementation as</typeparam>
+        /// <typeparam name="TImplementation">The implementation type</typeparam>
+        /// <param name="parameters">Optional constructor parameters</param>
+        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder Provide<TService, TImplementation>(params Parameter[] parameters)
+            => Provide<TService, TImplementation>(out _, parameters);
+
+        /// <summary>
+        /// Register the specified implementation type to the container as the specified service type with the given parameterst.
         /// </summary>
         /// <typeparam name="TService">The type to register the implementation as</typeparam>
         /// <typeparam name="TImplementation">The implementation type</typeparam>
@@ -155,6 +216,8 @@ namespace AutofacContrib.NSubstitute
         /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
         /// <param name="parameters">Any constructor parameters that Autofac can't resolve automatically</param>
         /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
+        [Obsolete("Use a Provide method instead")]
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
         public AutoSubstituteBuilder ResolveAndSubstituteFor<TService>(params Parameter[] parameters) where TService : class
         {
             _builder.RegisterType<TService>()

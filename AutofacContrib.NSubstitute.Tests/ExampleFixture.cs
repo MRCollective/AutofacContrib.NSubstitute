@@ -138,7 +138,7 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val = 3;
 
             using var mock = AutoSubstitute.Configure()
-                .Provide<IDependency2, Dependency2>(out _)
+                .Provide<IDependency2, Dependency2>()
                 .Build();
 
             mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
@@ -173,8 +173,10 @@ namespace AutofacContrib.NSubstitute.Tests
             const int val2 = 3;
             const int val3 = 4;
 
+#pragma warning disable CS0618 // Type or member is obsolete
             using var mock = AutoSubstitute.Configure()
                 .ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
+#pragma warning restore CS0618 // Type or member is obsolete
                 .Build();
 
             mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
@@ -183,6 +185,39 @@ namespace AutofacContrib.NSubstitute.Tests
             var result = mock.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
 
             Assert.That(result, Is.EqualTo(val2 * val3 * 2));
+        }
+
+        [Test]
+        public void Example_provide_service()
+        {
+            const int val1 = 2;
+            const int val2 = 3;
+            const int val3 = 4;
+
+            using var mock = AutoSubstitute.Configure()
+                .Provide<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
+                .Build();
+
+            mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
+            mock.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
+
+            var result = mock.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
+
+            Assert.That(result, Is.EqualTo(val2 * val3 * 2));
+        }
+
+        [Test]
+        public void Example_provide_service_with_out_param()
+        {
+            const int val1 = 2;
+
+            using var mock = AutoSubstitute.Configure()
+                .Provide<ConcreteClassWithDependency>(out var c, new TypedParameter(typeof(int), val1))
+                .Build();
+
+            var result = mock.Resolve<ConcreteClassWithDependency>();
+
+            Assert.AreSame(result, c.Value);
         }
     }
 }
