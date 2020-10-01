@@ -251,3 +251,17 @@ If you want to make modifications to the container builder before the container 
 ```c#
 var autoSubstitute = new AutoSubstitute(cb => cb.RegisterModule<SomeModule>());
 ```
+
+Options Configuration
+---------------------
+
+There are various options that can be used to set up the container and NSubstitute in helpful ways for some scenarios.  These are exposed via the `AutoSubstituteBuilder.ConfigureOptions()` method. The options currently available:
+
+- Add custom `MockHandler` instances that can intercept the creation of the NSubstitute mocks
+- Add custom handlers for the registration of implicit service creation via `AnyConcreteTypeNotAlreadyRegisteredSource`
+
+Some convenience methods build upon this to enable a few common scenarios:
+
+- `AutoSubstituteBuilder.InjectProperties()` - This enables auto injection of properties on the NSubstitute mock from the configured container
+- `AutoSubstituteBuilder.MakeUnregisteredTypesPerLifetime()` - This configures the `AnyConcreteTypeNotAlreadyRegisteredSource` to be per lifetime scope
+- `AutoSubstituteBuilder.UnregisteredTypesUseInternalConstructor()` - This configures the `AnyConcreteTypeNotAlreadyRegisteredSource` to search for non-public constructors as well.

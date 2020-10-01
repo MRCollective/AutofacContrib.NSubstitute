@@ -12,11 +12,13 @@ namespace AutofacContrib.NSubstitute
         private readonly Dictionary<Type, object> _substituteForRegistrations = new Dictionary<Type, object>();
         private readonly List<IProvidedValue> _providedValues;
         private readonly ContainerBuilder _builder;
+        private readonly AutoSubstituteOptions _options;
 
         public AutoSubstituteBuilder()
         {
             _builder = new ContainerBuilder();
             _providedValues = new List<IProvidedValue>();
+            _options = new AutoSubstituteOptions();
         }
 
         public AutoSubstitute Build()
@@ -24,8 +26,17 @@ namespace AutofacContrib.NSubstitute
 
         internal IContainer InternalBuild()
         {
-            _builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
-            _builder.RegisterSource(new NSubstituteRegistrationHandler());
+            _builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource
+            {
+                RegistrationConfiguration = c =>
+                {
+                    foreach (var configure in _options.ConfigureAnyConcreteTypeRegistration)
+                    {
+                        configure(c);
+                    }
+                }
+            });
+            _builder.RegisterSource(new NSubstituteRegistrationHandler(_options));
 
             var container = _builder.Build();
 
@@ -35,6 +46,17 @@ namespace AutofacContrib.NSubstitute
             }
 
             return container;
+        }
+
+        /// <summary>
+        /// Configures the option associated with this substitue builder.
+        /// </summary>
+        /// <param name="action">A delegate that configures the <see cref="AutoSubstituteOptions"/>.</param>
+        /// <returns>The <see cref="AutoSubstituteBuilder"/>.</returns>
+        public AutoSubstituteBuilder ConfigureOptions(Action<AutoSubstituteOptions> action)
+        {
+            action(_options);
+            return this;
         }
 
         /// <summary>
