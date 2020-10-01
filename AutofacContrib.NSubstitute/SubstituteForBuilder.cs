@@ -14,11 +14,20 @@ namespace AutofacContrib.NSubstitute
         private readonly AutoSubstituteBuilder _builder;
         private readonly IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> _registration;
 
-        internal SubstituteForBuilder(AutoSubstituteBuilder builder, IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> registration)
+        internal SubstituteForBuilder(
+            AutoSubstituteBuilder builder,
+            IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> registration,
+            bool isSubstituteFor)
         {
             _builder = builder;
             _registration = registration;
+            IsSubstituteFor = isSubstituteFor;
         }
+
+        /// <summary>
+        /// Used to identify if a builder was created by <see cref="AutoSubstituteBuilder.SubstituteFor{TService}(object[])"/> or <see cref="AutoSubstituteBuilder.SubstituteForPartsOf{TService}(object[])"/>.
+        /// </summary>
+        internal bool IsSubstituteFor { get; }
 
         /// <summary>
         /// Allows for configuration of the service.
