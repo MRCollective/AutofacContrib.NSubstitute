@@ -1,4 +1,5 @@
 ﻿using NSubstitute.Core;
+using Autofac;
 
 namespace AutofacContrib.NSubstitute
 {
@@ -18,6 +19,18 @@ namespace AutofacContrib.NSubstitute
                 var router = SubstitutionContext.Current.GetCallRouterFor(t);
 
                 router.CallBaseByDefault = false;
+            });
+
+            return builder;
+        }
+
+        public static SubstituteForBuilder<T> InjectProperties<T>(this SubstituteForBuilder<T> builder)
+            where T : class
+        {
+            builder.Configure((t, ctx) =>
+            {
+                ctx.InjectUnsetProperties(t);
+                AutoPropertyInjectorMockHandler.Instance.OnMockCreated(t, typeof(T), ctx, builder.Context);
             });
 
             return builder;

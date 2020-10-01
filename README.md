@@ -229,6 +229,38 @@ public void BaseCalledOnSubstituteForPartsOf()
 }
 ```
 
+You can also enforce all properties to be automatically injected on this substitute:
+
+```c#
+[Test]
+public void PropertiesSetIfRequested()
+{
+	using var mock = AutoSubstitute.Configure()
+		.Provide<IProperty, CustomProperty>(out var property)
+		.SubstituteFor<TestWithProperty>()
+			.InjectProperties()
+			.Configured()
+		.Build();
+
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+}
+
+[Test]
+public void PropertiesSetIfGloballyRequested()
+{
+	using var mock = AutoSubstitute.Configure()
+		.InjectProperties()
+		.Provide<IProperty, CustomProperty>(out var property)
+		.SubstituteFor<TestWithProperty>().Configured()
+		.Build();
+
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+}
+
+```
+
 Similarly, you can resolve a concrete type from the AutoSubstitute container and register that with the underlying container using the `ResolveAndSubstituteFor` method:
 
 ```c#

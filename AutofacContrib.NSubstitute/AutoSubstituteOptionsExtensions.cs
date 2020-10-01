@@ -1,7 +1,5 @@
 ﻿using Autofac;
 using Autofac.Core.Activators.Reflection;
-using NSubstitute.Core;
-using System;
 using System.Reflection;
 
 namespace AutofacContrib.NSubstitute
@@ -38,7 +36,8 @@ namespace AutofacContrib.NSubstitute
         public static AutoSubstituteBuilder InjectProperties(this AutoSubstituteBuilder builder)
             => builder.ConfigureOptions(options =>
             {
-                options.MockHandlers.Add(new AutoPropertyInjectorMockHandler());
+                options.AutoInjectProperties = true;
+                options.MockHandlers.Add(AutoPropertyInjectorMockHandler.Instance);
                 options.ConfigureAnyConcreteTypeRegistration.Add(r => r.PropertiesAutowired());
             });
 
@@ -49,38 +48,6 @@ namespace AutofacContrib.NSubstitute
             private NonPublicConstructorFinder()
                 : base(type => type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
             {
-            }
-        }
-
-        private class AutoPropertyInjectorMockHandler : MockHandler
-        {
-            protected internal override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
-            {
-                var router = substitutionContext.GetCallRouterFor(instance);
-
-                router.RegisterCustomCallHandlerFactory(_ => new AutoPropertyInjectorCallHandler(context));
-            }
-
-            private class AutoPropertyInjectorCallHandler : ICallHandler
-            {
-                private readonly IComponentContext _context;
-
-                public AutoPropertyInjectorCallHandler(IComponentContext context)
-                {
-                    _context = context;
-                }
-
-                public RouteAction Handle(ICall call)
-                {
-                    var property = call.GetMethodInfo().GetPropertyFromGetterCallOrNull();
-
-                    if (property is null)
-                    {
-                        return RouteAction.Continue();
-                    }
-
-                    return RouteAction.Return(_context.Resolve(call.GetReturnType()));
-                }
             }
         }
     }

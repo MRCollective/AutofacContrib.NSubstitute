@@ -90,9 +90,61 @@ namespace AutofacContrib.NSubstitute.Tests
             Assert.Throws<InvalidOperationException>(() => builder.SubstituteFor<Test1>());
         }
 
+        [Test]
+        public void PropertiesNotSetByDefault()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .Provide<IProperty, CustomProperty>(out _)
+                .SubstituteFor<TestWithProperty>().Configured()
+                .Build();
+
+            Assert.IsNull(mock.Resolve<TestWithProperty>().PropertySetter);
+            Assert.That(mock.Resolve<TestWithProperty>().VirtualProperty, Is.NSubstituteMock);
+        }
+
+        [Test]
+        public void PropertiesSetIfRequested()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .Provide<IProperty, CustomProperty>(out var property)
+                .SubstituteFor<TestWithProperty>()
+                    .InjectProperties()
+                    .Configured()
+                .Build();
+
+            Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+            Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+        }
+
+        [Test]
+        public void PropertiesSetIfGloballyRequested()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .InjectProperties()
+                .Provide<IProperty, CustomProperty>(out var property)
+                .SubstituteFor<TestWithProperty>().Configured()
+                .Build();
+
+            Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+            Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+        }
+
         public abstract class Test1
         {
             public virtual object Throws() => throw new InvalidOperationException();
         }
+
+        public abstract class TestWithProperty
+        {
+            public IProperty PropertySetter { get; set; }
+
+            public virtual IProperty VirtualProperty { get; }
+        }
+
+        public interface IProperty
+        {
+        }
+
+        public class CustomProperty : IProperty { }
     }
 }
