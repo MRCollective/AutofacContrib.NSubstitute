@@ -54,7 +54,7 @@ namespace AutofacContrib.NSubstitute
 
         private class AutoPropertyInjectorMockHandler : MockHandler
         {
-            public override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
+            protected internal override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
             {
                 var router = substitutionContext.GetCallRouterFor(instance);
 

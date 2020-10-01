@@ -20,6 +20,6 @@ namespace AutofacContrib.NSubstitute
         /// <param name="type">The type the mock was created for.</param>
         /// <param name="context">The current component context.</param>
         /// <param name="substitutionContext">The current substitution context.</param>
-        public abstract void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext);
+        protected internal abstract void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext);
     }
 }
