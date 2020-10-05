@@ -118,7 +118,7 @@ public void Example_test_with_concrete_type_provided()
 {
     const int val = 3;
     using var autoSubstitute = AutoSubstitute.Configure()
-        .Provide<IDependency2, Dependency2>(out _)
+        .Provide<IDependency2, Dependency2>()
         .Build();
     autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val); // This shouldn't do anything because of the next line
     autoSubstitute.Resolve<IDependency1>().SomeMethod(Arg.Any<int>()).Returns(c => c.Arg<int>());
@@ -126,6 +126,14 @@ public void Example_test_with_concrete_type_provided()
     var result = autoSubstitute.Resolve<MyClass>().AMethod();
 
     Assert.That(result, Is.EqualTo(Dependency2.Value));
+}
+
+[Test]
+public void Example_test_with_concrete_object_provide_by_parameter()
+{
+    using var mock = AutoSubstitute.Configure()
+        .Provide<ConcreteClassWithDependency>(new TypedParameter(typeof(int), 5))
+        .Build();
 }
 
 [Test]
