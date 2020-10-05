@@ -144,6 +144,8 @@ public void Example_test_with_concrete_object_provide()
 }
 ```
 
+### NSubstitute Helpers
+
 There is also a convenient syntax for registering and resolving a `Substitute.For<T>()` with the underlying container for concrete classes:
 
 ```c#
@@ -318,6 +320,8 @@ public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
 }
 ```
 
+### Direct configuration with ContainerBuilder
+
 If you need to access the underlying Autofac container for some reason then you use the `Container` property on the `AutoSubstitute` object.
 
 If you want to make modifications to the container builder before the container is build from it there is a second constructor parameter you can use, for example:
@@ -333,6 +337,8 @@ There are various options that can be used to set up the container and NSubstitu
 
 - Add custom `MockHandler` instances that can intercept the creation of the NSubstitute mocks
 - Add custom handlers for the registration of implicit service creation via `AnyConcreteTypeNotAlreadyRegisteredSource`
+- Add types that will be skipped during the mock generation via `TypesToSkipForMocking` option
+- Automatically skip mock generation of types that are specified in Provide methods via `AutomaticallySkipMocksForProvidedValues`
 
 Some convenience methods build upon this to enable a few common scenarios:
 
