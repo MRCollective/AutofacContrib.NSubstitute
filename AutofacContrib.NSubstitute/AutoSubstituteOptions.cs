@@ -6,6 +6,8 @@ namespace AutofacContrib.NSubstitute
 {
     public class AutoSubstituteOptions
     {
+        internal bool AutoInjectProperties { get; set; }
+
         /// <summary>
         /// Gets a collection of handlers that can be used to modify mocks after they are created.
         /// </summary>

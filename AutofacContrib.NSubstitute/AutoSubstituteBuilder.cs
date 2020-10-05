@@ -186,6 +186,11 @@ namespace AutofacContrib.NSubstitute
 
             _substituteForRegistrations.Add(typeof(TService), builder);
 
+            if (_options.AutoInjectProperties)
+            {
+                builder.InjectProperties();
+            }
+
             return builder;
         }
 

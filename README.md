@@ -208,6 +208,59 @@ public void BaseCalledOnSubstituteForPartsOf()
 }
 ```
 
+There is a helper method to ensure base calls are not routed by default for any method on partial substitutes if desired:
+
+```c#
+public abstract class Test1
+{
+	public virtual object Throws() => throw new InvalidOperationException();
+}
+
+[Test]
+public void BaseCalledOnSubstituteForPartsOf()
+{
+    using var mock = AutoSubstitute.Configure()
+        .SubstituteForPartsOf<Test1>().DoNotCallBase().Configured()
+        .Build();
+
+    var test1 = mock.Resolve<Test1>();
+
+    Assert.IsNull(test1.Throws());
+}
+```
+
+You can also enforce all properties to be automatically injected on this substitute:
+
+```c#
+[Test]
+public void PropertiesSetIfRequested()
+{
+	using var mock = AutoSubstitute.Configure()
+		.Provide<IProperty, CustomProperty>(out var property)
+		.SubstituteFor<TestWithProperty>()
+			.InjectProperties()
+			.Configured()
+		.Build();
+
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+}
+
+[Test]
+public void PropertiesSetIfGloballyRequested()
+{
+	using var mock = AutoSubstitute.Configure()
+		.InjectProperties()
+		.Provide<IProperty, CustomProperty>(out var property)
+		.SubstituteFor<TestWithProperty>().Configured()
+		.Build();
+
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
+	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().VirtualProperty);
+}
+
+```
+
 Similarly, you can resolve a concrete type from the AutoSubstitute container and register that with the underlying container using the `ResolveAndSubstituteFor` method:
 
 ```c#

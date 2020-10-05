@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Builder;
+using NSubstitute.Core;
 using System;
 
 namespace AutofacContrib.NSubstitute
@@ -29,6 +30,8 @@ namespace AutofacContrib.NSubstitute
         /// </summary>
         internal bool IsSubstituteFor { get; }
 
+        internal ISubstitutionContext Context => SubstitutionContext.Current;
+
         /// <summary>
         /// Allows for configuration of the service.
         /// </summary>
@@ -46,7 +49,7 @@ namespace AutofacContrib.NSubstitute
         {
             _registration.OnActivated(args =>
             {
-                action(args.Instance, args.Context);
+                action(args.Instance, args.Context.Resolve<IComponentContext>());
             });
 
             return _builder;

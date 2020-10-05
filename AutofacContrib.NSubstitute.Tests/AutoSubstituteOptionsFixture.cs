@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Autofac.Core;
 using NUnit.Framework;
+using System;
 
 namespace AutofacContrib.NSubstitute.Tests
 {
@@ -106,6 +107,33 @@ namespace AutofacContrib.NSubstitute.Tests
                 .Container;
 
             Assert.NotNull(mock.Resolve<ClassWithInternalConstructor>());
+        }
+
+        [Test]
+        public void BaseCalledByDefault()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .SubstituteForPartsOf<ClassWithBase>().Configured()
+                .Build()
+                .Container;
+
+            Assert.Throws<InvalidOperationException>(() => mock.Resolve<ClassWithBase>().Throws());
+        }
+
+        [Test]
+        public void BaseCallDisabled()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .SubstituteForPartsOf<ClassWithBase>().DoNotCallBase().Configured()
+                .Build()
+                .Container;
+
+            Assert.Null(mock.Resolve<ClassWithBase>().Throws());
+        }
+
+        public abstract class ClassWithBase
+        {
+            public virtual object Throws() => throw new InvalidOperationException();
         }
 
         public interface ITestInterface1
