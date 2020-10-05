@@ -2,6 +2,7 @@
 using Autofac.Builder;
 using NSubstitute.Core;
 using System;
+using System.ComponentModel;
 
 namespace AutofacContrib.NSubstitute
 {
@@ -9,18 +10,17 @@ namespace AutofacContrib.NSubstitute
     /// A class to configure substituted services.
     /// </summary>
     /// <typeparam name="TService">The type of the substituted service.</typeparam>
-    public class SubstituteForBuilder<TService>
+    public class SubstituteForBuilder<TService> : AutoSubstituteBuilder
         where TService : class
     {
-        private readonly AutoSubstituteBuilder _builder;
         private readonly IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> _registration;
 
         internal SubstituteForBuilder(
             AutoSubstituteBuilder builder,
             IRegistrationBuilder<TService, SimpleActivatorData, SingleRegistrationStyle> registration,
             bool isSubstituteFor)
+            : base(builder)
         {
-            _builder = builder;
             _registration = registration;
             IsSubstituteFor = isSubstituteFor;
         }
@@ -37,28 +37,32 @@ namespace AutofacContrib.NSubstitute
         /// </summary>
         /// <param name="action">The delegate to configure the service.</param>
         /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
+        [Obsolete("Use ConfigureSubstitute instead")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public AutoSubstituteBuilder Configure(Action<TService> action)
-            => Configure((s, _) => action(s));
+            => ConfigureSubstitute((s, _) => action(s));
+
+        /// <summary>
+        /// Allows for configuration of the service.
+        /// </summary>
+        /// <param name="action">The delegate to configure the service.</param>
+        /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
+        public SubstituteForBuilder<TService> ConfigureSubstitute(Action<TService> action)
+            => ConfigureSubstitute((s, _) => action(s));
 
         /// <summary>
         /// Allows for configuration of the service with access to the resolved components.
         /// </summary>
         /// <param name="action">The delegate to configure the service.</param>
         /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
-        public AutoSubstituteBuilder Configure(Action<TService, IComponentContext> action)
+        public SubstituteForBuilder<TService> ConfigureSubstitute(Action<TService, IComponentContext> action)
         {
             _registration.OnActivated(args =>
             {
                 action(args.Instance, args.Context.Resolve<IComponentContext>());
             });
 
-            return _builder;
+            return this;
         }
-
-        /// <summary>
-        /// Completes the configuration of the substitute.
-        /// </summary>
-        /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
-        public AutoSubstituteBuilder Configured() => _builder;
     }
 }

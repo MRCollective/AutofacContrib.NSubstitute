@@ -1,7 +1,7 @@
 ﻿using Autofac;
 using NSubstitute;
-using NSubstitute.Extensions;
 using NUnit.Framework;
+using System;
 
 namespace AutofacContrib.NSubstitute.Tests
 {
@@ -167,16 +167,15 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
+        [Obsolete]
         public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
         {
             const int val1 = 2;
             const int val2 = 3;
             const int val3 = 4;
 
-#pragma warning disable CS0618 // Type or member is obsolete
             using var mock = AutoSubstitute.Configure()
                 .ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
-#pragma warning restore CS0618 // Type or member is obsolete
                 .Build();
 
             mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
