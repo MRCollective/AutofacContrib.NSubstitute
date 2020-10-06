@@ -14,12 +14,27 @@ namespace AutofacContrib.NSubstitute
         private readonly ContainerBuilder _builder;
         private readonly AutoSubstituteOptions _options;
 
+        /// <summary>
+        /// Create a new instance of the builder.
+        /// </summary>
         public AutoSubstituteBuilder()
         {
             _substituteForRegistrations = new Dictionary<Type, object>();
             _afterBuildActions = new List<Action<IComponentContext>>();
             _builder = new ContainerBuilder();
             _options = new AutoSubstituteOptions();
+        }
+       
+        /// <summary>
+        /// Creates a new instance that allows linking to the previous instance for derived builders.
+        /// </summary>
+        /// <param name="other">A <see cref="AutoSubstituteBuilder"/> that should be connected to this instance</param>
+        private protected AutoSubstituteBuilder(AutoSubstituteBuilder other)
+        {
+            _substituteForRegistrations = other._substituteForRegistrations;
+            _afterBuildActions = other._afterBuildActions;
+            _builder = other._builder;
+            _options = other._options;
         }
 
         /// <summary>
@@ -274,7 +289,7 @@ namespace AutofacContrib.NSubstitute
             return builder;
         }
 
-        internal IProvidedValue<TService> CreateProvidedValue<TService>(Func<IComponentContext, TService> factory)
+        private protected IProvidedValue<TService> CreateProvidedValue<TService>(Func<IComponentContext, TService> factory)
         {
             var value = new ProvidedValue<TService>(factory);
 

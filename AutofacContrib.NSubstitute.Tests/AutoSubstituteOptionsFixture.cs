@@ -113,7 +113,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void BaseCalledByDefault()
         {
             using var mock = AutoSubstitute.Configure()
-                .SubstituteForPartsOf<ClassWithBase>().Configured()
+                .SubstituteForPartsOf<ClassWithBase>()
                 .Build()
                 .Container;
 
@@ -124,7 +124,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void BaseCallDisabled()
         {
             using var mock = AutoSubstitute.Configure()
-                .SubstituteForPartsOf<ClassWithBase>().DoNotCallBase().Configured()
+                .SubstituteForPartsOf<ClassWithBase>().DoNotCallBase()
                 .Build()
                 .Container;
 

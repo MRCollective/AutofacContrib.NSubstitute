@@ -164,7 +164,7 @@ public void Example_test_with_substitute_for_concrete()
     const int val2 = 2;
     const int val3 = 10;
     using var autoSubstitute = AutoSubstitute.Configure()
-        .SubstituteFor<ConcreteClass>(val2).Configure(c => c.Add(Arg.Any<int>()).Returns(val3))
+        .SubstituteFor<ConcreteClass>(val2).ConfigureSubstitute(c => c.Add(Arg.Any<int>()).Returns(val3))
         .Build();
     autoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
 
@@ -183,8 +183,8 @@ public void SubstituteForConfigureWithContext()
 	const int val = 2;
 
 	using var utoSubstitute = AutoSubstitute.Configure()
-		.SubstituteFor<ConcreteClass>(val).Configured()
-		.SubstituteFor<ConcreteClassWithObject>().Configure((s, ctx) =>
+		.SubstituteFor<ConcreteClass>(val)
+		.SubstituteFor<ConcreteClassWithObject>().ConfigureSubstitute((s, ctx) =>
 		{
 			s.Configure().GetResult().Returns(ctx.Resolve<ConcreteClass>());
 		})
@@ -209,7 +209,7 @@ public abstract class Test1
 public void BaseCalledOnSubstituteForPartsOf()
 {
     using var mock = AutoSubstitute.Configure()
-        .SubstituteForPartsOf<Test1>().Configured()
+        .SubstituteForPartsOf<Test1>()
         .Build();
 
     var test1 = mock.Resolve<Test1>();
@@ -230,7 +230,7 @@ public abstract class Test1
 public void BaseCalledOnSubstituteForPartsOf()
 {
     using var mock = AutoSubstitute.Configure()
-        .SubstituteForPartsOf<Test1>().DoNotCallBase().Configured()
+        .SubstituteForPartsOf<Test1>().DoNotCallBase()
         .Build();
 
     var test1 = mock.Resolve<Test1>();
@@ -249,7 +249,6 @@ public void PropertiesSetIfRequested()
 		.Provide<IProperty, CustomProperty>(out var property)
 		.SubstituteFor<TestWithProperty>()
 			.InjectProperties()
-			.Configured()
 		.Build();
 
 	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
@@ -262,7 +261,7 @@ public void PropertiesSetIfGloballyRequested()
 	using var mock = AutoSubstitute.Configure()
 		.InjectProperties()
 		.Provide<IProperty, CustomProperty>(out var property)
-		.SubstituteFor<TestWithProperty>().Configured()
+		.SubstituteFor<TestWithProperty>()
 		.Build();
 
 	Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);

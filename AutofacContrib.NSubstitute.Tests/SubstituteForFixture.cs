@@ -10,7 +10,8 @@ namespace AutofacContrib.NSubstitute.Tests
     public class SubstituteForFixture
     {
         [Test]
-        public void Example_test_with_substitute_for_concrete()
+        [Obsolete]
+        public void Example_test_with_substitute_for_concrete_obsolete()
         {
             const int val1 = 3;
             const int val2 = 2;
@@ -28,13 +29,31 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
+        public void Example_test_with_substitute_for_concrete()
+        {
+            const int val1 = 3;
+            const int val2 = 2;
+            const int val3 = 10;
+
+            using var utoSubstitute = AutoSubstitute.Configure()
+                .SubstituteFor<ConcreteClass>(val2).ConfigureSubstitute(c => c.Add(Arg.Any<int>()).Returns(val3))
+                .Build();
+
+            utoSubstitute.Resolve<IDependency2>().SomeOtherMethod().Returns(val1);
+
+            var result = utoSubstitute.Resolve<MyClassWithConcreteDependency>().AMethod();
+
+            Assert.That(result, Is.EqualTo(val3));
+        }
+
+        [Test]
         public void SubstituteForConfigureWithContext()
         {
             const int val = 2;
 
             using var utoSubstitute = AutoSubstitute.Configure()
-                .SubstituteFor<ConcreteClass>(val).Configured()
-                .SubstituteFor<ConcreteClassWithObject>().Configure((s, ctx) =>
+                .SubstituteFor<ConcreteClass>(val)
+                .SubstituteFor<ConcreteClassWithObject>().ConfigureSubstitute((s, ctx) =>
                 {
                     s.Configure().GetResult().Returns(ctx.Resolve<ConcreteClass>());
                 })
@@ -50,7 +69,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void BaseCalledOnSubstituteForPartsOf()
         {
             using var mock = AutoSubstitute.Configure()
-                .SubstituteForPartsOf<Test1>().Configured()
+                .SubstituteForPartsOf<Test1>()
                 .Build();
 
             var test1 = mock.Resolve<Test1>();
@@ -63,7 +82,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void BaseNotCalledOnSubstituteFor()
         {
             using var mock = AutoSubstitute.Configure()
-                .SubstituteFor<Test1>().Configured()
+                .SubstituteFor<Test1>()
                 .Build();
 
             var test1 = mock.Resolve<Test1>();
@@ -76,7 +95,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void FailsIfSubstituteTypeIsChanged()
         {
             var builder = AutoSubstitute.Configure()
-                .SubstituteFor<Test1>().Configured();
+                .SubstituteFor<Test1>();
 
             Assert.Throws<InvalidOperationException>(() => builder.SubstituteForPartsOf<Test1>());
         }
@@ -85,7 +104,7 @@ namespace AutofacContrib.NSubstitute.Tests
         public void FailsIfSubstituteTypeIsChanged2()
         {
             var builder = AutoSubstitute.Configure()
-                .SubstituteForPartsOf<Test1>().Configured();
+                .SubstituteForPartsOf<Test1>();
 
             Assert.Throws<InvalidOperationException>(() => builder.SubstituteFor<Test1>());
         }
@@ -95,7 +114,7 @@ namespace AutofacContrib.NSubstitute.Tests
         {
             using var mock = AutoSubstitute.Configure()
                 .Provide<IProperty, CustomProperty>(out _)
-                .SubstituteFor<TestWithProperty>().Configured()
+                .SubstituteFor<TestWithProperty>()
                 .Build();
 
             Assert.IsNull(mock.Resolve<TestWithProperty>().PropertySetter);
@@ -109,7 +128,6 @@ namespace AutofacContrib.NSubstitute.Tests
                 .Provide<IProperty, CustomProperty>(out var property)
                 .SubstituteFor<TestWithProperty>()
                     .InjectProperties()
-                    .Configured()
                 .Build();
 
             Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);
@@ -122,7 +140,7 @@ namespace AutofacContrib.NSubstitute.Tests
             using var mock = AutoSubstitute.Configure()
                 .InjectProperties()
                 .Provide<IProperty, CustomProperty>(out var property)
-                .SubstituteFor<TestWithProperty>().Configured()
+                .SubstituteFor<TestWithProperty>()
                 .Build();
 
             Assert.AreEqual(property.Value, mock.Resolve<TestWithProperty>().PropertySetter);

@@ -13,27 +13,19 @@ namespace AutofacContrib.NSubstitute
         /// <returns></returns>
         public static SubstituteForBuilder<T> DoNotCallBase<T>(this SubstituteForBuilder<T> builder)
             where T : class
-        {
-            builder.Configure(t =>
+            => builder.ConfigureSubstitute(t =>
             {
                 var router = SubstitutionContext.Current.GetCallRouterFor(t);
 
                 router.CallBaseByDefault = false;
             });
 
-            return builder;
-        }
-
         public static SubstituteForBuilder<T> InjectProperties<T>(this SubstituteForBuilder<T> builder)
             where T : class
-        {
-            builder.Configure((t, ctx) =>
+            => builder.ConfigureSubstitute((t, ctx) =>
             {
                 ctx.InjectUnsetProperties(t);
                 AutoPropertyInjectorMockHandler.Instance.OnMockCreated(t, typeof(T), ctx, builder.Context);
             });
-
-            return builder;
-        }
     }
 }
