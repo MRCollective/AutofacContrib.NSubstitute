@@ -219,5 +219,20 @@ namespace AutofacContrib.NSubstitute.Tests
 
             Assert.AreSame(result, c.Value);
         }
+
+        [Test]
+        public void CustomContainerBuilder()
+        {
+            var container = Substitute.For<IContainer>();
+
+            using var mock = AutoSubstitute.Configure()
+                .ConfigureOptions(options =>
+                {
+                    options.BuildContainerFactory = _ => container;
+                })
+                .Build();
+
+            Assert.AreSame(container, mock.Container);
+        }
     }
 }

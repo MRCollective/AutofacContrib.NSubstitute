@@ -9,18 +9,23 @@ namespace AutofacContrib.NSubstitute
 {
     public class AutoSubstituteBuilder
     {
-        private readonly Dictionary<Type, object> _substituteForRegistrations = new Dictionary<Type, object>();
-        private readonly List<IProvidedValue> _providedValues;
+        private readonly Dictionary<Type, object> _substituteForRegistrations;
+        private readonly List<Action<IComponentContext>> _afterBuildActions;
         private readonly ContainerBuilder _builder;
         private readonly AutoSubstituteOptions _options;
 
         public AutoSubstituteBuilder()
         {
+            _substituteForRegistrations = new Dictionary<Type, object>();
+            _afterBuildActions = new List<Action<IComponentContext>>();
             _builder = new ContainerBuilder();
-            _providedValues = new List<IProvidedValue>();
             _options = new AutoSubstituteOptions();
         }
 
+        /// <summary>
+        /// Builds an <see cref="AutoSubstitute"/> from the current builder.
+        /// </summary>
+        /// <returns>A new <see cref="AutoSubstitute"/> instance.</returns>
         public AutoSubstitute Build()
             => new AutoSubstitute(InternalBuild());
 
@@ -38,11 +43,11 @@ namespace AutofacContrib.NSubstitute
             });
             _builder.RegisterSource(new NSubstituteRegistrationHandler(_options));
 
-            var container = _builder.Build();
+            var container = _options.BuildContainerFactory(_builder);
 
-            foreach (var provided in _providedValues)
+            foreach (var action in _afterBuildActions)
             {
-                provided.SetContainer(container);
+                action(container);
             }
 
             return container;
@@ -269,27 +274,22 @@ namespace AutofacContrib.NSubstitute
             return builder;
         }
 
-        internal IProvidedValue<TService> CreateProvidedValue<TService>(Func<IContainer, TService> factory)
+        internal IProvidedValue<TService> CreateProvidedValue<TService>(Func<IComponentContext, TService> factory)
         {
             var value = new ProvidedValue<TService>(factory);
 
-            _providedValues.Add(value);
+            _afterBuildActions.Add(c => value.SetComponentContext(c));
 
             return value;
         }
 
-        private interface IProvidedValue
+        private class ProvidedValue<T> : IProvidedValue<T>
         {
-            void SetContainer(IContainer container);
-        }
+            private readonly Func<IComponentContext, T> _factory;
 
-        private class ProvidedValue<T> : IProvidedValue<T>, IProvidedValue
-        {
-            private readonly Func<IContainer, T> _factory;
+            private IComponentContext _componentContext;
 
-            private IContainer _container;
-
-            public ProvidedValue(Func<IContainer, T> factory)
+            public ProvidedValue(Func<IComponentContext, T> factory)
             {
                 _factory = factory;
             }
@@ -298,16 +298,16 @@ namespace AutofacContrib.NSubstitute
             {
                 get
                 {
-                    if (_container is null)
+                    if (_componentContext is null)
                     {
                         throw new InvalidOperationException("Build must be called before using a provided value.");
                     }
 
-                    return _factory(_container);
+                    return _factory(_componentContext);
                 }
             }
 
-            public void SetContainer(IContainer container) => _container = container;
+            public void SetComponentContext(IComponentContext c) => _componentContext = c;
         }
     }
 }
