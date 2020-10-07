@@ -37,7 +37,14 @@ namespace AutofacContrib.NSubstitute
                     return RouteAction.Continue();
                 }
 
-                return RouteAction.Return(_context.Resolve(call.GetReturnType()));
+                var service = _context.ResolveOptional(call.GetReturnType());
+
+                if (service is null)
+                {
+                    return RouteAction.Continue();
+                }
+
+                return RouteAction.Return(service);
             }
         }
     }
