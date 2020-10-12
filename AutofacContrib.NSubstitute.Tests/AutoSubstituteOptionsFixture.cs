@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
+using Autofac.Core.Registration;
 using NUnit.Framework;
 using System;
 
@@ -75,6 +76,23 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
+        public void InjectPropertiesNotResolvable()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .InjectProperties()
+                .SubstituteFor<WithStringProperty>()
+                .Build()
+                .Container;
+
+            // Verify that strings are not resolvable, otherwise this test won't be valid.
+            Assert.Throws<ComponentNotRegisteredException>(() => mock.Resolve<string>());
+
+            var obj = mock.Resolve<WithStringProperty>();
+
+            Assert.IsNotNull(obj.Test);
+        }
+
+        [Test]
         public void InjectPropertiesInterfaceRecursive()
         {
             using var mock = AutoSubstitute.Configure()
@@ -144,6 +162,11 @@ namespace AutofacContrib.NSubstitute.Tests
         public class WithProperties
         {
             public ITestInterface1 Service { get; set; }
+        }
+
+        public class WithStringProperty
+        {
+            public virtual string Test { get; }
         }
 
         public class Class1
