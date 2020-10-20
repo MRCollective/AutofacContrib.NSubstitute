@@ -60,7 +60,14 @@ namespace AutofacContrib.NSubstitute
                 service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
 
+#pragma warning disable CS0612 // Type or member is obsolete
             if (_options.TypesToSkipForMocking.Contains(typedService.ServiceType))
+#pragma warning restore CS0612 // Type or member is obsolete
+            {
+                return Enumerable.Empty<IComponentRegistration>();
+            }
+
+            if (registrationAccessor(service).Any())
             {
                 return Enumerable.Empty<IComponentRegistration>();
             }
