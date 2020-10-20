@@ -5,13 +5,44 @@
     <AssemblyName>AutofacContrib.NSubstitute</AssemblyName>
     <RootNamespace>AutofacContrib.NSubstitute</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>4.9.4</Version>
-    <AssemblyVersion>4.9.4.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Miguel Madero, Robert Moore and Matt Davies</Authors>
+    <Description>Auto-mocking Autofac container that uses NSubstitute.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>logo.png</PackageIcon>
+    <PackageTags>substitute mocking mocks nsubstitute autofac container dependency-injection di testing unit-testing TDD AAA auto-mock auto-substitute</PackageTags>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+    <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
+    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    <Version>$(GitVersion_NuGetVersionV2)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(CI)' == 'true' ">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="Autofac" Version="5.2.0" />
     <PackageReference Include="NSubstitute" Version="4.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../LICENSE" Pack="true" PackagePath=""/>
+    <None Include="../logo.png" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 </Project>
