@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core;
+using Autofac.Core.Activators.Reflection;
 using Autofac.Core.Registration;
 using NUnit.Framework;
 using System;
@@ -113,7 +114,7 @@ namespace AutofacContrib.NSubstitute.Tests
                 .Build()
                 .Container;
 
-            Assert.Throws<DependencyResolutionException>(() => mock.Resolve<ClassWithInternalConstructor>());
+            Assert.Throws<NoConstructorsFoundException>(() => mock.Resolve<ClassWithInternalConstructor>());
         }
 
         [Test]

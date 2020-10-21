@@ -44,7 +44,7 @@ namespace AutofacContrib.NSubstitute
         ///     Registrations for the service.
         /// </returns>
         public IEnumerable<IComponentRegistration> RegistrationsFor
-            (Service service, Func<Service, IEnumerable<IComponentRegistration>> registrationAccessor)
+            (Service service, Func<Service, IEnumerable<ServiceRegistration>> registrationAccessor)
         {
             if (service == null)
             {
