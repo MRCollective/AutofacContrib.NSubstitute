@@ -1,0 +1,25 @@
+<Project>
+
+  <PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>    
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <InformationalVersion>$(GitVersion_InformationalVersion)</InformationalVersion>
+    <FileVersion>$(GitVersion_MajorMinorPatch)</FileVersion>
+    <AssemblyVersion>$(GitVersion_AssemblySemVer)</AssemblyVersion>
+    <Version>$(GitVersion_NuGetVersionV2)</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+</Project>
