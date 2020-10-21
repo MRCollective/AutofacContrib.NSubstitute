@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace AutofacContrib.NSubstitute.MockHandlers
 {
     /// <summary>
-    /// An implementation of a <see cref="MockHandler"/> that will skip creation of mocks of type <typeparamref name="T"/>.
+    /// An implementation of a <see cref="MockHandler"/> that will skip creation of mocks for given types.
     /// </summary>
-    public class SkipTypeMockHandler : MockHandler
+    public sealed class SkipTypeMockHandler : MockHandler
     {
         private readonly IEnumerable<Type> _types;
 
@@ -34,17 +34,18 @@ namespace AutofacContrib.NSubstitute.MockHandlers
 
         private SkipTypeMockHandler(IEnumerable<Type> types)
         {
-            _types = types;
+            _types = types ?? throw new ArgumentNullException(nameof(types));
         }
-
-        protected internal sealed override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext) 
-            => base.OnMockCreated(instance, type, context, substitutionContext);
 
         protected internal override void OnMockCreating(MockCreatingContext context)
         {
             foreach (var type in _types)
             {
-                if (type == context.Type)
+                if (type.IsGenericType && type == type.GetGenericTypeDefinition())
+                {
+                    context.DoNotCreate();
+                }
+                else if (type == context.Type)
                 {
                     context.DoNotCreate();
                 }

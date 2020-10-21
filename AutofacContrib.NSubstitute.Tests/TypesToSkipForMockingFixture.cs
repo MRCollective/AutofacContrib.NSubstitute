@@ -52,6 +52,19 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
+        public void ManuallyCheckTypeToSkipOpenGeneric()
+        {
+            var mock = AutoSubstitute.Configure()
+                .ConfigureOptions(options =>
+                {
+                    options.MockHandlers.Add(SkipTypeMockHandler.Create(typeof(IDependency<>)));
+                })
+                .Build();
+
+            Assert.Throws<ComponentNotRegisteredException>(() => mock.Resolve<IDependency<object>>());
+        }
+
+        [Test]
         public void RegisteredTypesAreNotMocked()
         {
             var mock = AutoSubstitute.Configure()
@@ -65,6 +78,10 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         public interface IDependency
+        {
+        }
+
+        public interface IDependency<T>
         {
         }
 
