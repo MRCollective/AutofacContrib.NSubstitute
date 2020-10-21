@@ -1,5 +1,6 @@
 ﻿using Autofac.Core.Registration;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 
 namespace AutofacContrib.NSubstitute.Tests
@@ -17,12 +18,13 @@ namespace AutofacContrib.NSubstitute.Tests
 
             var items = mock.Resolve<IDependency[]>();
 
+            Assert.AreEqual(2, items.Length);
             Assert.AreEqual(impl1.Value, items[0]);
             Assert.AreEqual(impl2.Value, items[1]);
-            Assert.That(items[2], Is.NSubstituteMock);
         }
 
         [Test]
+        [Obsolete]
         public void ManuallyAddTypeToSkip()
         {
             var mock = AutoSubstitute.Configure()
@@ -36,13 +38,9 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        public void DisableMockGenerationOnProvide()
+        public void RegisteredTypesAreNotMocked()
         {
             var mock = AutoSubstitute.Configure()
-                .ConfigureOptions(options =>
-                {
-                    options.AutomaticallySkipMocksForProvidedValues = true;
-                })
                 .Provide<IDependency, Impl1>(out var impl1)
                 .Provide<IDependency, Impl2>(out var impl2)
                 .Build();

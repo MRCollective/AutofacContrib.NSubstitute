@@ -150,5 +150,27 @@ namespace AutofacContrib.NSubstitute.Tests
             Assert.That(component.ServiceItems.Contains(mockA.Value), Is.True);
             Assert.That(component.ServiceItems.Contains(mockB.Value), Is.True);
         }
+
+        [Test]
+        public void OpenGenericResolvesCorrectly()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .ConfigureBuilder(b => b
+                    .RegisterGeneric(typeof(OpenGeneric<>))
+                    .As(typeof(IOpenGeneric<>)))
+                .Build();
+
+            var open = mock.Resolve<IOpenGeneric<string>>();
+
+            Assert.That(open, Is.TypeOf<OpenGeneric<string>>());
+        }
+
+        public class OpenGeneric<T> : IOpenGeneric<T>
+        {
+        }
+
+        public interface IOpenGeneric<T>
+        {
+        }
     }
 }
