@@ -1,5 +1,6 @@
 ﻿using NSubstitute.Core;
 using Autofac;
+using AutofacContrib.NSubstitute.MockHandlers;
 
 namespace AutofacContrib.NSubstitute
 {

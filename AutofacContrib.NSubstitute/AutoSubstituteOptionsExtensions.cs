@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Core.Activators.Reflection;
+using AutofacContrib.NSubstitute.MockHandlers;
 using System.Reflection;
 
 namespace AutofacContrib.NSubstitute

@@ -5,6 +5,7 @@ using Autofac;
 using Autofac.Builder;
 using Autofac.Core;
 using Autofac.Features.Decorators;
+using AutofacContrib.NSubstitute.MockHandlers;
 using NSubstitute;
 using NSubstitute.Core;
 
@@ -60,14 +61,14 @@ namespace AutofacContrib.NSubstitute
                 service is DecoratorService)
                 return Enumerable.Empty<IComponentRegistration>();
 
-#pragma warning disable CS0612 // Type or member is obsolete
-            if (_options.TypesToSkipForMocking.Contains(typedService.ServiceType))
-#pragma warning restore CS0612 // Type or member is obsolete
+            var context = new MockCreatingContext(typedService.ServiceType, registrationAccessor(service).Any());
+
+            foreach (var handler in _options.MockHandlers)
             {
-                return Enumerable.Empty<IComponentRegistration>();
+                handler.OnMockCreating(context);
             }
 
-            if (registrationAccessor(service).Any())
+            if (!context.ShouldCreate)
             {
                 return Enumerable.Empty<IComponentRegistration>();
             }
