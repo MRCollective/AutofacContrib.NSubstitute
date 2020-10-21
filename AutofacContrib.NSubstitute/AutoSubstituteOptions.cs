@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Builder;
+using AutofacContrib.NSubstitute.MockHandlers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,12 +11,23 @@ namespace AutofacContrib.NSubstitute
     {
         private readonly static Func<ContainerBuilder, Autofac.IContainer> _defaultContainerBuilder = b => b.Build();
 
+        private readonly HashSet<Type> _typesToSkipForMocking = new HashSet<Type>();
+
+        public AutoSubstituteOptions()
+        {
+            MockHandlers = new List<MockHandler>
+            {
+                AlreadyExistsMockHandler.Instance,
+                SkipTypeMockHandler.Create(_typesToSkipForMocking)
+            };
+        }
+
         internal bool AutoInjectProperties { get; set; }
 
         /// <summary>
         /// Gets a collection of handlers that can be used to modify mocks after they are created.
         /// </summary>
-        public ICollection<MockHandler> MockHandlers { get; } = new List<MockHandler>();
+        public ICollection<MockHandler> MockHandlers { get; }
 
         /// <summary>
         /// Gets a collection of delegates that can augment the registrations of objects created but not registered.
@@ -25,9 +37,9 @@ namespace AutofacContrib.NSubstitute
         /// <summary>
         /// Gets a collection of types that will be skipped during generation of NSubstitute mocks.
         /// </summary>
-        [Obsolete]
+        [Obsolete("Use a custom MockHandler instead")]
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public ICollection<Type> TypesToSkipForMocking { get; } = new HashSet<Type>();
+        public ICollection<Type> TypesToSkipForMocking => _typesToSkipForMocking;
 
         /// <summary>
         /// Gets or sets a flag indicating whether mocks should be excluded for provided values. This will automatically add values given to Provide methods to <see cref="TypesToSkipForMocking"/>.

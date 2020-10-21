@@ -2,7 +2,7 @@
 using NSubstitute.Core;
 using System;
 
-namespace AutofacContrib.NSubstitute
+namespace AutofacContrib.NSubstitute.MockHandlers
 {
     internal class AutoPropertyInjectorMockHandler : MockHandler
     {

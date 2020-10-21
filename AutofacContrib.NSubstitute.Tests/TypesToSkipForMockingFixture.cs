@@ -1,4 +1,5 @@
 ﻿using Autofac.Core.Registration;
+using AutofacContrib.NSubstitute.MockHandlers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,19 @@ namespace AutofacContrib.NSubstitute.Tests
                 .ConfigureOptions(options =>
                 {
                     options.TypesToSkipForMocking.Add(typeof(IDependency));
+                })
+                .Build();
+
+            Assert.Throws<ComponentNotRegisteredException>(() => mock.Resolve<IDependency>());
+        }
+
+        [Test]
+        public void ManuallyCheckTypeToSkip()
+        {
+            var mock = AutoSubstitute.Configure()
+                .ConfigureOptions(options =>
+                {
+                    options.MockHandlers.Add(SkipTypeMockHandler.Create<IDependency>());
                 })
                 .Build();
 

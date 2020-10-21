@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A5ECD18F-1D42-444E-BB3A-6062D8B0E256}"
 	ProjectSection(SolutionItems) = preProject
 		BREAKING_CHANGES.md = BREAKING_CHANGES.md
+		GitVersionConfig.yaml = GitVersionConfig.yaml
 		global.json = global.json
 		LICENSE = LICENSE
 		logo.png = logo.png
