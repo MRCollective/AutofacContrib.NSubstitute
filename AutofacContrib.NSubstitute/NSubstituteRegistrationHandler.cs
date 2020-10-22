@@ -79,9 +79,11 @@ namespace AutofacContrib.NSubstitute
                     var instance = Substitute.For(new[] { typedService.ServiceType }, null);
                     var ctx = c.Resolve<IComponentContext>();
 
+                    var mockCreatedContext = new MockCreatedContext(instance, typedService.ServiceType, ctx, SubstitutionContext.Current);
+
                     foreach (var handler in _options.MockHandlers)
                     {
-                        handler.OnMockCreated(instance, typedService.ServiceType, ctx, SubstitutionContext.Current);
+                        handler.OnMockCreated(mockCreatedContext);
                     }
 
                     return instance;

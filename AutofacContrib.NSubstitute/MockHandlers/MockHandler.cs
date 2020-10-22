@@ -2,6 +2,7 @@
 using AutofacContrib.NSubstitute.MockHandlers;
 using NSubstitute.Core;
 using System;
+using System.ComponentModel;
 
 namespace AutofacContrib.NSubstitute
 {
@@ -21,8 +22,21 @@ namespace AutofacContrib.NSubstitute
         /// <param name="type">The type the mock was created for.</param>
         /// <param name="context">The current component context.</param>
         /// <param name="substitutionContext">The current substitution context.</param>
-        protected internal virtual void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
+        [Obsolete]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        protected virtual void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
         {
+        }
+
+        /// <summary>
+        /// Provides a way to manage mocks after creation but before returned from the container registry.
+        /// </summary>
+        /// <param name="context">Created context.</param>
+        protected internal virtual void OnMockCreated(MockCreatedContext context)
+        {
+#pragma warning disable CS0612 // Type or member is obsolete
+            OnMockCreated(context.Instance, context.Type, context.Context, context.SubstitutionContext);
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         /// <summary>

@@ -12,11 +12,11 @@ namespace AutofacContrib.NSubstitute.MockHandlers
         {
         }
 
-        protected internal override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
+        protected internal override void OnMockCreated(MockCreatedContext context)
         {
-            var router = substitutionContext.GetCallRouterFor(instance);
+            var router = context.SubstitutionContext.GetCallRouterFor(context.Instance);
 
-            router.RegisterCustomCallHandlerFactory(_ => new AutoPropertyInjectorCallHandler(context));
+            router.RegisterCustomCallHandlerFactory(_ => new AutoPropertyInjectorCallHandler(context.Context));
         }
 
         private class AutoPropertyInjectorCallHandler : ICallHandler

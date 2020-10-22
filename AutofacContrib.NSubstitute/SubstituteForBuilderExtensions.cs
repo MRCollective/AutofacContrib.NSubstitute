@@ -26,7 +26,8 @@ namespace AutofacContrib.NSubstitute
             => builder.ConfigureSubstitute((t, ctx) =>
             {
                 ctx.InjectUnsetProperties(t);
-                AutoPropertyInjectorMockHandler.Instance.OnMockCreated(t, typeof(T), ctx, builder.Context);
+                var mockCtx = new MockCreatedContext(t, typeof(T), ctx, builder.Context);
+                AutoPropertyInjectorMockHandler.Instance.OnMockCreated(mockCtx);
             });
     }
 }
