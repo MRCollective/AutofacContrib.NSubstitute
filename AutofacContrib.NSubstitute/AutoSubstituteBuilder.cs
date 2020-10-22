@@ -9,6 +9,7 @@ namespace AutofacContrib.NSubstitute
 {
     public class AutoSubstituteBuilder
     {
+        private readonly Dictionary<Type, object> _customDataManager;
         private readonly Dictionary<Type, object> _substituteForRegistrations;
         private readonly List<Action<IComponentContext>> _afterBuildActions;
         private readonly ContainerBuilder _builder;
@@ -20,18 +21,20 @@ namespace AutofacContrib.NSubstitute
         public AutoSubstituteBuilder()
         {
             _substituteForRegistrations = new Dictionary<Type, object>();
+            _customDataManager = new Dictionary<Type, object>();
             _afterBuildActions = new List<Action<IComponentContext>>();
             _builder = new ContainerBuilder();
             _options = new AutoSubstituteOptions();
         }
-       
+
         /// <summary>
         /// Creates a new instance that allows linking to the previous instance for derived builders.
         /// </summary>
         /// <param name="other">A <see cref="AutoSubstituteBuilder"/> that should be connected to this instance</param>
-        private protected AutoSubstituteBuilder(AutoSubstituteBuilder other)
+        protected AutoSubstituteBuilder(AutoSubstituteBuilder other)
         {
             _substituteForRegistrations = other._substituteForRegistrations;
+            _customDataManager = other._customDataManager;
             _afterBuildActions = other._afterBuildActions;
             _builder = other._builder;
             _options = other._options;
@@ -277,13 +280,51 @@ namespace AutofacContrib.NSubstitute
             return builder;
         }
 
-        private protected IProvidedValue<TService> CreateProvidedValue<TService>(Func<IComponentContext, TService> factory)
+        /// <summary>
+        /// Registers a callback for about <see cref="Build"/> is called.
+        /// </summary>
+        /// <param name="callback">Callback to call.</param>
+        protected void RegisterBuildCallback(Action<IComponentContext> callback)
+            => _afterBuildActions.Add(callback);
+
+        /// <summary>
+        /// Creates a delayed provided value with the given factory method.
+        /// </summary>
+        /// <typeparam name="TService">Service to expose for the provided value.</typeparam>
+        /// <param name="factory">Factory to create value.</param>
+        /// <returns>A provided value.</returns>
+        protected IProvidedValue<TService> CreateProvidedValue<TService>(Func<IComponentContext, TService> factory)
         {
             var value = new ProvidedValue<TService>(factory);
 
-            _afterBuildActions.Add(c => value.SetComponentContext(c));
+            RegisterBuildCallback(c => value.SetComponentContext(c));
 
             return value;
+        }
+
+        /// <summary>
+        /// Retrieves storage of item that needs to be persisted across multiple calls to configuration methods.
+        /// Some methods will wrap the builder into a new object, so this ensures that data used in one builder
+        /// can be accessed later on.
+        /// 
+        /// Since the data is keyed by type, it is recommended to use a custom data type to hold the data if it
+        /// is a well-known type.
+        /// </summary>
+        /// <typeparam name="T">Type of custom data.</typeparam>
+        /// <param name="factory">Factory to create data.</param>
+        /// <returns>A cached instance of the data, or a new instance if not already available.</returns>
+        protected T GetCustomData<T>(Func<T> factory)
+        {
+            if (_customDataManager.TryGetValue(typeof(T), out var result))
+            {
+                return (T)result;
+            }
+
+            var created = factory();
+
+            _customDataManager.Add(typeof(T), created);
+
+            return created;
         }
 
         private class ProvidedValue<T> : IProvidedValue<T>
