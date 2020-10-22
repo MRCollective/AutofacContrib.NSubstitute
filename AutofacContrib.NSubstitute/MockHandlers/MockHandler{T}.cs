@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using AutofacContrib.NSubstitute.MockHandlers;
 using NSubstitute.Core;
 using System;
 
@@ -11,11 +12,11 @@ namespace AutofacContrib.NSubstitute
         where T : class
     {
         /// <inheritdoc />
-        protected internal sealed override void OnMockCreated(object instance, Type type, IComponentContext context, ISubstitutionContext substitutionContext)
+        protected internal sealed override void OnMockCreated(MockCreatedContext context)
         {
-            if (typeof(T) == type && instance is T t)
+            if (typeof(T) == context.Type && context.Instance is T t)
             {
-                OnMockCreated(t, context, substitutionContext);
+                OnMockCreated(t, context.Context, context.SubstitutionContext);
             }
         }
 
