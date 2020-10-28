@@ -267,6 +267,7 @@ namespace AutofacContrib.NSubstitute
 
             var registration = _builder.Register(_ => factory())
                 .As<TService>()
+                .AutoActivate()
                 .InstancePerLifetimeScope();
             var builder = new SubstituteForBuilder<TService>(this, registration, isSubstituteFor);
 

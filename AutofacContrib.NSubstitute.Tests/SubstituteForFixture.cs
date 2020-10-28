@@ -10,6 +10,57 @@ namespace AutofacContrib.NSubstitute.Tests
     public class SubstituteForFixture
     {
         [Test]
+        public void ConfigureSubstitueFor()
+        {
+            using var mock = AutoSubstitute.Configure()
+                .SubstituteFor<Concrete1>()
+                    .ConfigureSubstitute((c, ctx) =>
+                    {
+                        var concrete2 = ctx.Resolve<Concrete2>();
+                        c.Configure().Get().Returns(concrete2);
+                    })
+                .SubstituteFor<Concrete2>()
+                    .ConfigureSubstitute((c, ctx) =>
+                    {
+                        var concrete3 = ctx.Resolve<Concrete3>();
+                        c.Configure().Get().Returns(concrete3);
+                    })
+                 .SubstituteFor<Concrete3>()
+                .Build();
+
+            var result = mock.Resolve<ConcreteTest>().Get();
+            var expected = mock.Resolve<Concrete3>();
+
+            Assert.AreSame(expected, result);
+        }
+
+        public abstract class Concrete1
+        {
+            public abstract Concrete2 Get();
+        }
+
+        public abstract class Concrete2
+        {
+            public abstract Concrete3 Get();
+        }
+
+        public abstract class Concrete3
+        {
+        }
+
+        public class ConcreteTest
+        {
+            private readonly Concrete2 _c2;
+
+            public ConcreteTest(Concrete1 c1)
+            {
+                _c2 = c1.Get();
+            }
+
+            public Concrete3 Get() => _c2.Get();
+        }
+
+        [Test]
         [Obsolete]
         public void Example_test_with_substitute_for_concrete_obsolete()
         {
