@@ -62,6 +62,7 @@ namespace AutofacContrib.NSubstitute.Tests
                 .Build();
 
             Assert.Throws<ComponentNotRegisteredException>(() => mock.Resolve<IDependency<object>>());
+            Assert.That(mock.Resolve<IDependency2<object>>(), Is.NSubstituteMock);
         }
 
         [Test]
@@ -78,6 +79,10 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         public interface IDependency
+        {
+        }
+
+        public interface IDependency2<T>
         {
         }
 

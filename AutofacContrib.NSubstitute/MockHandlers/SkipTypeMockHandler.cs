@@ -41,9 +41,12 @@ namespace AutofacContrib.NSubstitute.MockHandlers
         {
             foreach (var type in _types)
             {
-                if (type.IsGenericType && type == type.GetGenericTypeDefinition())
+                if (type.IsGenericType && context.Type.IsGenericType)
                 {
-                    context.DoNotCreate();
+                    if (context.Type.GetGenericTypeDefinition() == type.GetGenericTypeDefinition())
+                    {
+                        context.DoNotCreate();
+                    }
                 }
                 else if (type == context.Type)
                 {
