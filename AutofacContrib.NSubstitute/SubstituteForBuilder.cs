@@ -37,16 +37,6 @@ namespace AutofacContrib.NSubstitute
         /// </summary>
         /// <param name="action">The delegate to configure the service.</param>
         /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
-        [Obsolete("Use ConfigureSubstitute instead")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public AutoSubstituteBuilder Configure(Action<TService> action)
-            => ConfigureSubstitute((s, _) => action(s));
-
-        /// <summary>
-        /// Allows for configuration of the service.
-        /// </summary>
-        /// <param name="action">The delegate to configure the service.</param>
-        /// <returns>The original <see cref="AutoSubstituteBuilder"/>.</returns>
         public SubstituteForBuilder<TService> ConfigureSubstitute(Action<TService> action)
             => ConfigureSubstitute((s, _) => action(s));
 

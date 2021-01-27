@@ -35,20 +35,6 @@ namespace AutofacContrib.NSubstitute
         public ICollection<Action<IRegistrationBuilder<object, ConcreteReflectionActivatorData, SingleRegistrationStyle>>> ConfigureAnyConcreteTypeRegistration { get; } = new List<Action<IRegistrationBuilder<object, ConcreteReflectionActivatorData, SingleRegistrationStyle>>>();
 
         /// <summary>
-        /// Gets a collection of types that will be skipped during generation of NSubstitute mocks.
-        /// </summary>
-        [Obsolete("Use a custom MockHandler instead")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public ICollection<Type> TypesToSkipForMocking => _typesToSkipForMocking;
-
-        /// <summary>
-        /// Gets or sets a flag indicating whether mocks should be excluded for provided values. This will automatically add values given to Provide methods to <see cref="TypesToSkipForMocking"/>.
-        /// </summary>
-        [Obsolete]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool AutomaticallySkipMocksForProvidedValues { get; set; }
-
-        /// <summary>
         /// Gets or sets a factory to create an <see cref="IContainer"/> given a <see cref="ContainerBuilder"/>. This defaults to simply calling <see cref="ContainerBuilder.Build()"/>.
         /// </summary>
         public Func<ContainerBuilder, Autofac.IContainer> BuildContainerFactory { get; set; } = _defaultContainerBuilder;

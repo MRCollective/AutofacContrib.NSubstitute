@@ -25,20 +25,6 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        [Obsolete]
-        public void ManuallyAddTypeToSkip()
-        {
-            var mock = AutoSubstitute.Configure()
-                .ConfigureOptions(options =>
-                {
-                    options.TypesToSkipForMocking.Add(typeof(IDependency));
-                })
-                .Build();
-
-            Assert.Throws<ComponentNotRegisteredException>(() => mock.Resolve<IDependency>());
-        }
-
-        [Test]
         public void ManuallyCheckTypeToSkip()
         {
             var mock = AutoSubstitute.Configure()
