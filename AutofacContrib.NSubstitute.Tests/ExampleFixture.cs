@@ -167,26 +167,6 @@ namespace AutofacContrib.NSubstitute.Tests
         }
 
         [Test]
-        [Obsolete]
-        public void Example_test_with_substitute_for_concrete_resolved_from_autofac()
-        {
-            const int val1 = 2;
-            const int val2 = 3;
-            const int val3 = 4;
-
-            using var mock = AutoSubstitute.Configure()
-                .ResolveAndSubstituteFor<ConcreteClassWithDependency>(new TypedParameter(typeof(int), val1))
-                .Build();
-
-            mock.Resolve<IDependency2>().SomeOtherMethod().Returns(val2);
-            mock.Resolve<IDependency1>().SomeMethod(val1).Returns(val3);
-
-            var result = mock.Resolve<MyClassWithConcreteDependencyThatHasDependencies>().AMethod();
-
-            Assert.That(result, Is.EqualTo(val2 * val3 * 2));
-        }
-
-        [Test]
         public void Example_provide_service()
         {
             const int val1 = 2;

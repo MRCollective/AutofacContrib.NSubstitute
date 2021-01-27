@@ -1,6 +1,17 @@
 AutofacContrib.NSubstitute (AutoSubstitute) Breaking Changes
 ============================================================
 
+Version 7.0.0
+-------------
+
+Removed obsolete methods that were in the project.
+
+### Reason
+They built up some unnecessary cruft and had easy replacements
+
+### Workaround
+Update to the latest 6.x package and review obsolete messages.
+
 Version 6.0.0
 -------------
 

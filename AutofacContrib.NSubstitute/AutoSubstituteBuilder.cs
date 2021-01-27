@@ -231,25 +231,6 @@ namespace AutofacContrib.NSubstitute
             where TService : class
             => CreateSubstituteForBuilder(() => Substitute.ForPartsOf<TService>(parameters), false);
 
-        /// <summary>
-        /// Registers to the container and returns a substitute for a given concrete class using autofac to resolve the constructor parameters.
-        /// This is used for concrete classes where NSubstitutes won't be created by default by the container when using Resolve.
-        /// For advanced uses consider using directly <see cref="Substitute.For{TService}"/> and then calling <see cref="Provide{TService}(TService)"/> so that type is used on dependencies for other Resolved types.
-        /// </summary>
-        /// <typeparam name="TService">The type to register and return a substitute for</typeparam>
-        /// <param name="parameters">Any constructor parameters that Autofac can't resolve automatically</param>
-        /// <returns>The current <see cref="AutoSubstituteBuilder"/>.</returns>
-        [Obsolete("Use a Provide method instead")]
-        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
-        public AutoSubstituteBuilder ResolveAndSubstituteFor<TService>(params Parameter[] parameters) where TService : class
-        {
-            _builder.RegisterType<TService>()
-                .WithParameters(parameters)
-                .InstancePerLifetimeScope();
-
-            return this;
-        }
-
         private SubstituteForBuilder<TService> CreateSubstituteForBuilder<TService>(Func<TService> factory, bool isSubstituteFor)
             where TService : class
         {
